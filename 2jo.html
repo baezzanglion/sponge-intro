@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>우리 2조 · 서로의 OS | 스폰지클럽 2기</title>
+</head>
+<body>
+<style>
+  :root{
+    --bg:#F7F1E7; --card:#FFFFFF; --ink:#2A231C; --muted:#8A7E70;
+    --line:#E6DBC9; --hair:#EEE4D3;
+    --honey:#D6900F; --coral:#E85C3C;
+    --a1:#D6900F; --a2:#E85C3C; --a3:#C6527E; --a4:#2C9E82; --a5:#B06A2C;
+    --shadow:0 1px 2px rgba(60,45,20,.06), 0 10px 26px -14px rgba(60,45,20,.22);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#17120D; --card:#241D16; --ink:#EEE4D6; --muted:#A79B8B;
+      --line:#382E24; --hair:#31271D;
+      --honey:#EBAF43; --coral:#F27A5B;
+      --a1:#E7AC3E; --a2:#F27A5B; --a3:#DD79A4; --a4:#3EBDA0; --a5:#D2924E;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 30px -16px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#F7F1E7; --card:#FFFFFF; --ink:#2A231C; --muted:#8A7E70; --line:#E6DBC9; --hair:#EEE4D3;
+    --honey:#D6900F; --coral:#E85C3C; --a1:#D6900F; --a2:#E85C3C; --a3:#C6527E; --a4:#2C9E82; --a5:#B06A2C;
+    --shadow:0 1px 2px rgba(60,45,20,.06), 0 10px 26px -14px rgba(60,45,20,.22);
+  }
+  :root[data-theme="dark"]{
+    --bg:#17120D; --card:#241D16; --ink:#EEE4D6; --muted:#A79B8B; --line:#382E24; --hair:#31271D;
+    --honey:#EBAF43; --coral:#F27A5B; --a1:#E7AC3E; --a2:#F27A5B; --a3:#DD79A4; --a4:#3EBDA0; --a5:#D2924E;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 30px -16px rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box;}
+  body{margin:0;}
+  .wrap{
+    font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',system-ui,-apple-system,sans-serif;
+    background:
+      radial-gradient(1100px 520px at 50% -6%, color-mix(in srgb,var(--coral) 13%, transparent), transparent 62%),
+      var(--bg);
+    color:var(--ink);min-height:100vh;line-height:1.6;
+    padding:clamp(20px,5vw,56px) clamp(14px,4vw,28px) 72px;-webkit-font-smoothing:antialiased;
+  }
+  .inner{max-width:900px;margin:0 auto;}
+
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--coral);
+  }
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--honey);}
+  h1{font-size:clamp(30px,7vw,52px);line-height:1.07;letter-spacing:-.02em;font-weight:800;margin:14px 0 0;text-wrap:balance;}
+  h1 .hl{color:var(--coral);}
+  .lede{margin:16px 0 0;max-width:60ch;font-size:clamp(15px,2.6vw,17px);color:var(--muted);}
+  .banner{
+    margin-top:20px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:12px 15px;box-shadow:var(--shadow);font-size:13.5px;
+  }
+  .banner b{color:var(--honey);font-weight:800;}
+  .rule{height:1px;background:var(--hair);border:0;margin:28px 0 24px;}
+
+  .grid{display:grid;grid-template-columns:1fr;gap:16px;}
+  @media (min-width:660px){.grid{grid-template-columns:1fr 1fr;}}
+
+  .card{
+    position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:19px 18px 18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:11px;
+    --accent:var(--a1);border-left:4px solid var(--accent);
+  }
+  .card.lead{border-color:color-mix(in srgb,var(--honey) 50%,var(--line));}
+  .role-rib{
+    position:absolute;top:15px;right:15px;font-size:11px;font-weight:800;letter-spacing:.04em;
+    color:#fff;background:var(--accent);padding:4px 9px;border-radius:999px;
+  }
+  .namerow{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;padding-right:70px;}
+  .nick{font-size:22px;font-weight:800;letter-spacing:-.01em;}
+  .real{font-size:14px;color:var(--muted);font-weight:500;}
+  .job{font-size:13.5px;color:var(--muted);margin-top:-3px;}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .chip{
+    font-size:12px;font-weight:600;color:var(--ink);
+    background:color-mix(in srgb,var(--accent) 13%,transparent);
+    border:1px solid color-mix(in srgb,var(--accent) 28%,transparent);
+    padding:3px 9px;border-radius:999px;
+  }
+  .bio{font-size:13.5px;color:var(--ink);opacity:.9;}
+  .os{
+    margin-top:3px;border-radius:12px;padding:12px 13px;
+    background:color-mix(in srgb,var(--accent) 10%,transparent);
+    border:1px dashed color-mix(in srgb,var(--accent) 40%,transparent);
+  }
+  .os .lab{
+    font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--accent);display:flex;align-items:center;gap:6px;
+  }
+  .os .name{font-size:15px;font-weight:800;margin-top:4px;line-height:1.35;}
+  .os .desc{font-size:13px;color:var(--muted);margin-top:2px;}
+
+  .a1{--accent:var(--a1);} .a2{--accent:var(--a2);} .a3{--accent:var(--a3);}
+  .a4{--accent:var(--a4);} .a5{--accent:var(--a5);}
+
+  .foot{margin:30px auto 0;max-width:60ch;text-align:center;color:var(--muted);font-size:14px;}
+  .foot .h{color:var(--coral);}
+</style>
+
+<div class="wrap">
+  <div class="inner">
+
+    <header>
+      <span class="eyebrow"><span class="dot"></span>스폰지클럽 2기 · 세션3 · 우리 조 모임</span>
+      <h1>우리 <span class="hl">2조</span>,<br>서로의 OS를 나눠요</h1>
+      <p class="lede">2주 동안 각자 만든 걸 꺼내놓는 이기적공유 시간이에요. 발표 전에 서로 뭘 만들었는지 한 번 훑고 오면, 질문도 응원도 훨씬 깊어져요.</p>
+      <div class="banner">🍊 <span><b>전원 풀출석</b>이 우리 조 컨셉! 오늘도 서로가 서로를 챙기며, 각자의 OS에 좋은 질문 하나씩 남겨줘요.</span></div>
+    </header>
+
+    <hr class="rule">
+
+    <div class="grid">
+
+      <!-- 배짱 (조장) -->
+      <article class="card lead a2">
+        <span class="role-rib">조장</span>
+        <div class="namerow"><span class="nick">배짱</span><span class="real">박종배</span></div>
+        <div class="job">교육 마케터</div>
+        <div class="chips"><span class="chip">마케터</span><span class="chip">농부아들</span><span class="chip">하늘아빠</span></div>
+        <p class="bio">“관계를 더 좋게 만드는 사람”으로 기억되고 싶은 조장. 2조 전원이 6주를 완주하고 각자의 OS를 만들어내도록 돕는 게 목표예요.</p>
+        <div class="os"><div class="lab">🛠 이번에 만든 OS</div><div class="name">마음배달 · 3종 OS</div><div class="desc">서로 챙기는 마니또 OS + 광고 소재 OS + 선교 온마음(노래·사진관)</div></div>
+      </article>
+
+      <!-- 레미 (부조장) -->
+      <article class="card lead a1">
+        <span class="role-rib">부조장</span>
+        <div class="namerow"><span class="nick">레미</span><span class="real">최주희</span></div>
+        <div class="job">CRM 컨설팅 · 디지털 마케터</div>
+        <div class="chips"><span class="chip">워킹맘</span><span class="chip">배우는 사람</span><span class="chip">실행력</span></div>
+        <p class="bio">“혼자 가면 빨리, 함께 가면 멀리.” 처음 본 사람과 친해지기 자신 있어요. 요즘 주식·아이교육에 빠져 있어요.</p>
+        <div class="os"><div class="lab">🛠 이번에 만든 OS</div><div class="name">스탁마인드</div><div class="desc">관점이 쌓이고 흐름으로 이어지는 나만의 주식 인텔리전스 대시보드</div></div>
+      </article>
+
+      <!-- 찌니 -->
+      <article class="card a3">
+        <div class="namerow"><span class="nick">찌니</span><span class="real">신진영</span></div>
+        <div class="job">시니어 플랫폼(시놀) 기획 · 운영</div>
+        <div class="chips"><span class="chip">함께 나누는 찌니</span><span class="chip">기획자</span><span class="chip">1기 참여</span></div>
+        <p class="bio">스타트업 기획자 출신, 셀피쉬에서 일주일 만에 어드민을 직접 개발한 도파민을 잊지 못해요. “1기 2배 → 2기 4배 성장”이 목표.</p>
+        <div class="os"><div class="lab">🛠 이번에 만든 OS</div><div class="name">CheckWall</div><div class="desc">컨퍼런스 현장에서 QR로 2차 참석을 인증샷 벽으로 모으는 서비스</div></div>
+      </article>
+
+      <!-- 에밀리아 -->
+      <article class="card a4">
+        <div class="namerow"><span class="nick">에밀리아</span><span class="real">최혜정</span></div>
+        <div class="job">반려견 트레이닝센터 대표</div>
+        <div class="chips"><span class="chip">반려견 트레이너</span><span class="chip">코치</span><span class="chip">행복코디네이터</span></div>
+        <p class="bio">“늦음은 없다, 지금이 가장 빠를 때.” 새로운 걸 배우는 용기가 강점. AI는 이제 시작이지만 용기 내어 도전 중이에요.</p>
+        <div class="os"><div class="lab">🛠 이번에 만든 OS</div><div class="name">도그 체형·자세 분석 OS</div><div class="desc">반려견의 움직임·자세를 분석해 교육에 활용하는 도구</div></div>
+      </article>
+
+      <!-- 끼리 -->
+      <article class="card a5">
+        <div class="namerow"><span class="nick">끼리</span><span class="real">김용수</span></div>
+        <div class="job">자동차 부품 연구개발 엔지니어</div>
+        <div class="chips"><span class="chip">스포츠</span><span class="chip">엔지니어</span><span class="chip">열정</span></div>
+        <p class="bio">“바쁘다는 핑계 접고, 집중의 6주 폭풍 성장”이 다짐. 꾸준함이 강점이고, 요즘 클로드·깃허브와 부지런히 친해지는 중이에요.</p>
+        <div class="os"><div class="lab">🛠 이번에 만든 OS</div><div class="name">콘텐츠 OS 2종</div><div class="desc">용인 인플루언서 블로그 & 끼리 블로그 수익화</div></div>
+      </article>
+
+      <!-- 밤비선장 -->
+      <article class="card a2">
+        <div class="namerow"><span class="nick">밤비선장</span><span class="real">성대제</span></div>
+        <div class="job">교육 기관 운영 (필라테스)</div>
+        <div class="chips"><span class="chip">필라테스</span><span class="chip">시</span><span class="chip">신경계</span></div>
+        <p class="bio">“감각과 무감각 사이를 걷고 뛰는 자.” 솔직함이 자신 있는 것. 평생 컴맹이었지만 AI의 힘을 빌려 ‘컴맹 탈출’에 도전 중이에요.</p>
+        <div class="os"><div class="lab">🛠 이번에 만든 OS</div><div class="name">텔레그램 자동 알림봇</div><div class="desc">하루 루틴을 챙겨주는 나만의 알림 OS</div></div>
+      </article>
+
+      <!-- 딜런 -->
+      <article class="card a3">
+        <div class="namerow"><span class="nick">딜런</span><span class="real">조종훈</span></div>
+        <div class="job">크립토 VC 포트폴리오 매니저 · 사업개발</div>
+        <div class="chips"><span class="chip">완주</span><span class="chip">꾸준함</span><span class="chip">바이브코딩</span></div>
+        <p class="bio">“크게 벌이고 방치하지 말자, 작게 시작해 매일 쓰자.” 거창한 결과보다 끝까지 완주하는 사람으로 기억되고 싶어 해요.</p>
+        <div class="os"><div class="lab">🛠 이번에 만든 OS</div><div class="name">dylan-os</div><div class="desc">텔레그램에 뭘 던지든 제자리에 정리하고, 매주 일요일 다시 꺼내주는 COO</div></div>
+      </article>
+
+      <!-- 쎄이 -->
+      <article class="card a1">
+        <div class="namerow"><span class="nick">쎄이</span><span class="real">이보미</span></div>
+        <div class="job">이커머스 마케터</div>
+        <div class="chips"><span class="chip">호기심</span><span class="chip">추진력</span><span class="chip">센스</span></div>
+        <p class="bio">“흔들려도 결국 결과를 만드는 사람.” 좋아하는 일엔 딥다이브. 작은 아이디어라도 실제 런칭까지 해내는 게 이번 목표예요.</p>
+        <div class="os"><div class="lab">🛠 이번에 만든 OS</div><div class="name">일정뽀개기 OS</div><div class="desc">흩어진 일정을 정리해 하루를 뽀개주는 시스템</div></div>
+      </article>
+
+      <!-- 망고 -->
+      <article class="card a4">
+        <div class="namerow"><span class="nick">망고</span><span class="real">윤민영</span></div>
+        <div class="job">재즈 뮤지션 · 프리랜서</div>
+        <div class="chips"><span class="chip">재즈뮤지션</span><span class="chip">디깅</span><span class="chip">적응력</span></div>
+        <p class="bio">재즈 뮤지션이자 영어로 말하는 사람. 세계 어딜 가도 적응 잘하고 스몰토크에 능해요. “편안하고 지혜로운 사람”으로 기억되고 싶어 해요.</p>
+        <div class="os"><div class="lab">🛠 이번에 만든 OS</div><div class="name">Come Away</div><div class="desc">탭 없이 집중하는 성경 묵상 OS</div></div>
+      </article>
+
+      <!-- 위버 -->
+      <article class="card a5">
+        <div class="namerow"><span class="nick">위버</span><span class="real">박세미</span></div>
+        <div class="job">초기 스타트업 COO · 총괄 PM</div>
+        <div class="chips"><span class="chip">여행</span><span class="chip">호기심</span><span class="chip">긍정</span></div>
+        <p class="bio">“뭐라도 같이 해보고 싶은 밝은 사람.” 중구난방인 일을 도서관처럼 정리하고, 상상하던 비즈니스를 실제로 런칭해보는 게 목표예요.</p>
+        <div class="os"><div class="lab">🛠 이번에 만든 OS</div><div class="name">AI 공부 본진</div><div class="desc">흩어진 공부를 한 곳에 — service-blueprint로 만든 나만의 공부 시스템</div></div>
+      </article>
+
+      <!-- 세계로 -->
+      <article class="card a1">
+        <div class="namerow"><span class="nick">세계로</span><span class="real">진혜정</span></div>
+        <div class="job">예비창업자 (맞춤옷 사업 준비) · <span style="color:var(--coral)">오늘은 마음으로 함께 💛</span></div>
+        <div class="chips"><span class="chip">실행</span><span class="chip">일단 해보기</span><span class="chip">호기심</span></div>
+        <p class="bio">“성실하고 열정적인 사람.” 낯 안 가리고 먼저 이야기·질문하는 편이에요. 육아와 사업의 균형을 지키며 나아가는 게 다짐.</p>
+        <div class="os"><div class="lab">🛠 이번에 만든 OS</div><div class="name">가계부 OS</div><div class="desc">텔레그램으로 지출을 말하면 자동 분류·기록하는 나만의 가계부</div></div>
+      </article>
+
+      <!-- 솔라 -->
+      <article class="card a2">
+        <div class="namerow"><span class="nick">솔라</span><span class="real">손수정</span></div>
+        <div class="job">AI 영상 크리에이터 · 1기 운영진 · <span style="color:var(--coral)">오늘은 마음으로 함께 💛</span></div>
+        <div class="chips"><span class="chip">촬영</span><span class="chip">AI영상</span><span class="chip">나를 디깅</span></div>
+        <p class="bio">“1기 때보다 한 뼘 더 성장한 사람.” 계획하고 실행하는 게 강점. 내 삶·지인에게 필요한 걸 클로드코드로 앱·웹으로 만들어 선물하는 데 빠져 있어요.</p>
+        <div class="os"><div class="lab">🛠 이번에 만든 OS</div><div class="name">영상 작업 자동화 OS</div><div class="desc">매일의 작업 조각이 나도 모르게 강사의 교재가 되는 시스템 (영상 자동화 도전 중)</div></div>
+      </article>
+
+    </div>
+
+    <p class="foot">서로의 OS에 “이건 어떻게 만들었어요?” 질문 하나, “이거 좋다” 응원 하나씩. 그게 이기적공유예요 <span class="h">♥</span></p>
+
+  </div>
+</div>
+
+</body>
+</html>

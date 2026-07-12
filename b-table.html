@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>B테이블 · 서로 소개해요 | 스폰지클럽 2기</title>
+</head>
+<body>
+<style>
+  :root{
+    --bg:#F6F1E8; --board:#EFE7D8; --card:#FFFFFF; --ink:#2B2520; --muted:#8B8073;
+    --line:#E4DAC8; --hair:#EAE1D1;
+    --honey:#D89613; --coral:#E9603F;
+    --c1:#CF8A12; --c2:#E9603F; --c3:#C25389; --c4:#1E9E84; --c5:#5670D6; --c6:#94559F;
+    --tagpin:#C9BEA8;
+    --shadow:0 1px 2px rgba(60,45,20,.06), 0 8px 24px -12px rgba(60,45,20,.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#181410; --board:#211B15; --card:#2A231B; --ink:#EDE4D6; --muted:#A2988A;
+      --line:#3A3128; --hair:#33291F;
+      --honey:#EDB44B; --coral:#F17C5E;
+      --c1:#E3AB3E; --c2:#F17C5E; --c3:#DB74A3; --c4:#3CBDA0; --c5:#8195E8; --c6:#B579BE;
+      --tagpin:#4A3F30;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#F6F1E8; --board:#EFE7D8; --card:#FFFFFF; --ink:#2B2520; --muted:#8B8073;
+    --line:#E4DAC8; --hair:#EAE1D1; --honey:#D89613; --coral:#E9603F;
+    --c1:#CF8A12; --c2:#E9603F; --c3:#C25389; --c4:#1E9E84; --c5:#5670D6; --c6:#94559F;
+    --tagpin:#C9BEA8; --shadow:0 1px 2px rgba(60,45,20,.06), 0 8px 24px -12px rgba(60,45,20,.18);
+  }
+  :root[data-theme="dark"]{
+    --bg:#181410; --board:#211B15; --card:#2A231B; --ink:#EDE4D6; --muted:#A2988A;
+    --line:#3A3128; --hair:#33291F; --honey:#EDB44B; --coral:#F17C5E;
+    --c1:#E3AB3E; --c2:#F17C5E; --c3:#DB74A3; --c4:#3CBDA0; --c5:#8195E8; --c6:#B579BE;
+    --tagpin:#4A3F30; --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -14px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box;}
+  body{margin:0;}
+  .wrap{
+    font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',system-ui,-apple-system,sans-serif;
+    background:
+      radial-gradient(1200px 600px at 50% -8%, color-mix(in srgb, var(--honey) 12%, transparent), transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    min-height:100vh;
+    padding:clamp(20px,5vw,56px) clamp(14px,4vw,28px) 72px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .inner{max-width:860px;margin:0 auto;}
+
+  /* ---- header ---- */
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--honey);
+  }
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--coral);}
+  h1{
+    font-size:clamp(30px,7vw,50px);line-height:1.08;letter-spacing:-.02em;
+    font-weight:800;margin:14px 0 0;text-wrap:balance;
+  }
+  h1 .b{color:var(--honey);}
+  .lede{
+    margin:16px 0 0;max-width:60ch;font-size:clamp(15px,2.6vw,17px);color:var(--muted);
+  }
+  .qbar{
+    margin-top:22px;display:flex;flex-wrap:wrap;gap:10px;
+  }
+  .q{
+    display:flex;gap:9px;align-items:flex-start;
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:11px 14px;font-size:13.5px;color:var(--ink);flex:1 1 260px;box-shadow:var(--shadow);
+  }
+  .q b{color:var(--coral);font-weight:800;white-space:nowrap;}
+  .rule{height:1px;background:var(--hair);border:0;margin:30px 0 26px;}
+
+  /* ---- cards ---- */
+  .grid{display:grid;grid-template-columns:1fr;gap:16px;}
+  @media (min-width:640px){.grid{grid-template-columns:1fr 1fr;}}
+
+  .tag{
+    position:relative;background:var(--card);border:1px solid var(--line);
+    border-radius:16px;padding:20px 18px 18px;box-shadow:var(--shadow);
+    display:flex;flex-direction:column;gap:12px;
+    --accent:var(--c1);
+  }
+  .tag::before{ /* colored top band = 원조 */
+    content:"";position:absolute;left:0;right:0;top:0;height:5px;
+    background:var(--accent);border-radius:16px 16px 0 0;
+  }
+  .tag.host{border-color:color-mix(in srgb,var(--honey) 55%,var(--line));}
+  .host-ribbon{
+    position:absolute;top:14px;right:14px;font-size:11px;font-weight:800;
+    letter-spacing:.06em;color:#fff;background:var(--honey);
+    padding:4px 9px;border-radius:999px;
+  }
+  .namerow{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding-right:64px;}
+  .nick{font-size:23px;font-weight:800;letter-spacing:-.01em;}
+  .real{font-size:14px;color:var(--muted);font-weight:500;}
+  .crew{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:22px;height:22px;padding:0 6px;border-radius:7px;
+    font-size:12px;font-weight:800;color:#fff;background:var(--accent);
+    font-variant-numeric:tabular-nums;
+  }
+  .job{font-size:14px;color:var(--muted);margin-top:-4px;}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .chip{
+    font-size:12px;font-weight:600;color:var(--ink);
+    background:color-mix(in srgb,var(--accent) 12%,transparent);
+    border:1px solid color-mix(in srgb,var(--accent) 26%,transparent);
+    padding:3px 9px;border-radius:999px;
+  }
+  .bio{font-size:14px;color:var(--ink);opacity:.9;}
+  .make{
+    display:flex;gap:8px;align-items:flex-start;font-size:13.5px;
+    background:color-mix(in srgb,var(--accent) 8%,transparent);
+    border-radius:11px;padding:10px 12px;margin-top:2px;
+  }
+  .make .lab{font-weight:800;color:var(--accent);white-space:nowrap;}
+
+  .c1{--accent:var(--c1);} .c2{--accent:var(--c2);} .c3{--accent:var(--c3);}
+  .c4{--accent:var(--c4);} .c5{--accent:var(--c5);} .c6{--accent:var(--c6);}
+
+  .footnote{
+    margin:30px auto 0;max-width:60ch;text-align:center;color:var(--muted);
+    font-size:14px;
+  }
+  .footnote .heart{color:var(--coral);}
+  .legend{margin-top:10px;font-size:12px;color:var(--muted);text-align:center;}
+</style>
+
+<div class="wrap">
+  <div class="inner">
+
+    <header>
+      <span class="eyebrow"><span class="dot"></span>스폰지클럽 2기 · 세션1 · B테이블</span>
+      <h1>우리 <span class="b">B테이블</span>,<br>서로 소개해요</h1>
+      <p class="lede">오늘 한 테이블에서 만난 10명이에요. 시작 전에 서로를 가볍게 한 번 훑고 오면 대화가 훨씬 풍성해져요. 이름 옆 숫자는 원래 조랍니다.</p>
+
+      <div class="qbar">
+        <div class="q"><b>Q1</b><span>남은 기간, ‘이것만큼은 달라지고 싶다’ 하는 것</span></div>
+        <div class="q"><b>Q2</b><span>AI로 시간이 생기면, 그 시간을 어디에 쓰고 싶은지</span></div>
+      </div>
+    </header>
+
+    <hr class="rule">
+
+    <div class="grid">
+
+      <!-- 배짱 (host) -->
+      <article class="tag host c2">
+        <span class="host-ribbon">오늘의 호스트</span>
+        <div class="namerow"><span class="nick">배짱</span><span class="real">박종배</span><span class="crew">2</span></div>
+        <div class="job">교육 마케터</div>
+        <div class="chips"><span class="chip">마케터</span><span class="chip">농부아들</span><span class="chip">하늘아빠</span></div>
+        <p class="bio">“관계를 더 좋게 만드는 사람”으로 기억되고 싶어요. 자신 있는 건 책임감(그리고 아재개그 😄). 요즘은 루틴 만들기에 빠져 있어요.</p>
+        <div class="make"><span class="lab">지금 만드는 중</span><span>마음배달 — 서로가 서로를 챙기는 2조 마니또 OS</span></div>
+      </article>
+
+      <!-- 웃는돌 -->
+      <article class="tag c6">
+        <div class="namerow"><span class="nick">웃는돌</span><span class="real">장경아</span><span class="crew">6</span></div>
+        <div class="job">사이드 프로젝트 운영 직장인 · 예비창업</div>
+        <div class="chips"><span class="chip">호기심</span><span class="chip">도전</span><span class="chip">행동파</span></div>
+        <p class="bio">“일단 해보는 걸 좋아해서 지체 없이 합류했어요.” 퇴근 후 2–3시간 글쓰기·트렌드 분석. 본업·글쓰기·사이드·엄마 네 역할을 오가며 삽니다.</p>
+        <div class="make"><span class="lab">지금 만드는 중</span><span>흔적 OS — 던진 생각·기록을 시스템이 알아서 줍고 정리</span></div>
+      </article>
+
+      <!-- 리사 -->
+      <article class="tag c4">
+        <div class="namerow"><span class="nick">리사</span><span class="real">이주현</span><span class="crew">4</span></div>
+        <div class="job">스마트스토어 운영(7년 반·12명 팀) · 직원교육</div>
+        <div class="chips"><span class="chip">호기심</span><span class="chip">따뜻함</span><span class="chip">실행력</span></div>
+        <p class="bio">배우면 바로 써보고 남에게 쉽게 설명하는 게 강점. “적은 인원으로 많은 일을 해내는 튼튼한 기업”을 꿈꿔요. 요즘 발레 수업 중.</p>
+        <div class="make"><span class="lab">지금 만드는 중</span><span>고객 리뷰 자동분류 CRM</span></div>
+      </article>
+
+      <!-- 김형 -->
+      <article class="tag c1">
+        <div class="namerow"><span class="nick">김형</span><span class="real">김형준</span><span class="crew">1</span></div>
+        <div class="job">교육 스타트업 대표 (스피치 · 외국인 한국어)</div>
+        <div class="chips"><span class="chip">본질</span><span class="chip">섬세</span><span class="chip">명료</span></div>
+        <p class="bio">“진짜 문제가 뭔지부터 정의하고, 풀릴 때까지 붙드는 집요함”이 자신 있는 것. 요즘은 3D 프린터에 꽂혀 있어요.</p>
+        <div class="make"><span class="lab">지금 만드는 중</span><span>흩어진 생각을 다시 찾는 콘텐츠 OS</span></div>
+      </article>
+
+      <!-- 제인 -->
+      <article class="tag c3">
+        <div class="namerow"><span class="nick">제인</span><span class="real">최지연</span><span class="crew">3</span></div>
+        <div class="job">광고대행사 마케터</div>
+        <div class="chips"><span class="chip">밝음</span><span class="chip">호기심</span><span class="chip">성장</span></div>
+        <p class="bio">한번 다짐하면 끝까지 붙잡고 하는 편. “혼자면 막힐 때 멈추게 돼서, 함께 풀고 동기부여 받으려” 왔어요. 요즘 클라이밍 시작!</p>
+        <div class="make"><span class="lab">지금 만드는 중</span><span>데일리→월간 재사용 마케팅 리포트 OS</span></div>
+      </article>
+
+      <!-- 자인 -->
+      <article class="tag c3">
+        <div class="namerow"><span class="nick">자인</span><span class="real">허정우</span><span class="crew">3</span></div>
+        <div class="job">한의사 17년차 · 암 한방병원 운영 · 1인 창업 준비</div>
+        <div class="chips"><span class="chip">힐러</span><span class="chip">오지라퍼</span><span class="chip">마음만 자유인</span></div>
+        <p class="bio">아로마·싱잉볼·EFT·태극권 등 자연치유법을 쉽게 풀어드려요. “적극적으로 나누고 연결해주는 사람.” AI는 이제 시작, 용기 내어 도전 중.</p>
+        <div class="make"><span class="lab">지금 만드는 중</span><span>건강관리 앱 + 커뮤니티 + 강의</span></div>
+      </article>
+
+      <!-- 카라 -->
+      <article class="tag c5">
+        <div class="namerow"><span class="nick">카라</span><span class="real">최강훈</span><span class="crew">5</span></div>
+        <div class="job">개발 → PM 15년+ · 데이터분석 공부 중</div>
+        <div class="chips"><span class="chip">해보자</span><span class="chip">기록수집</span><span class="chip">포기 안 함</span></div>
+        <p class="bio">비전공 프로그래머로 시작해 개발팀장·PM을 거쳤어요. “정제된 지식을 비전공자·초심자 언어로 다시 나누는 동료”가 되는 게 목표.</p>
+        <div class="make"><span class="lab">지금 만드는 중</span><span>차곡(Chagok) — 공부를 카드뉴스로 자산화</span></div>
+      </article>
+
+      <!-- 코코 -->
+      <article class="tag c4">
+        <div class="namerow"><span class="nick">코코</span><span class="real">전예슬</span><span class="crew">4</span></div>
+        <div class="job">브랜딩 · 영상 디자이너</div>
+        <div class="chips"><span class="chip">색수집가</span><span class="chip">호기심</span><span class="chip">등산</span></div>
+        <p class="bio">“같이 막히고 같이 푼 동료”로 6주를 보내고 싶어요. 이미 AI를 매일 작업에 쓰는데, 영상 자동화의 ‘되는 경계’를 직접 부딪혀 찾는 중.</p>
+        <div class="make"><span class="lab">지금 만드는 중</span><span>영상 제작 워크플로우 자동화 (강의→숏폼)</span></div>
+      </article>
+
+      <!-- 포비 -->
+      <article class="tag c5">
+        <div class="namerow"><span class="nick">포비</span><span class="real">이지선</span><span class="crew">5</span></div>
+        <div class="job">교육서비스 9년차 · 강사 · 컨설턴트 · 작가</div>
+        <div class="chips"><span class="chip">워커홀릭</span><span class="chip">열정</span><span class="chip">창의적성과</span></div>
+        <p class="bio">성격행동유형(DISC·MBTI 등) 진단 기반 교육을 운영해요. 처음 본 사람과도 대화 술술 잇는 ‘이야기보따리’ — 함께하면 에너지가 납니다.</p>
+        <div class="make"><span class="lab">지금 만드는 중</span><span>SNS 후기 자동화 (인스타 · 블로그)</span></div>
+      </article>
+
+      <!-- 찌니 -->
+      <article class="tag c2">
+        <div class="namerow"><span class="nick">찌니</span><span class="real">신진영</span><span class="crew">2</span></div>
+        <div class="job">시니어 플랫폼(시놀) 기획 · 운영</div>
+        <div class="chips"><span class="chip">함께 나누는 찌니</span><span class="chip">기획자</span><span class="chip">1기 참여</span></div>
+        <p class="bio">스타트업 기획자 출신, 12년 육아 후 복귀 9년차. 셀피쉬클럽에서 일주일 만에 어드민을 직접 개발한 도파민을 잊지 못해요. (배짱과 같은 2조!)</p>
+        <div class="make"><span class="lab">지금 만드는 중</span><span>CheckWall — 컨퍼런스 QR 인증샷 벽</span></div>
+      </article>
+
+    </div>
+
+    <p class="footnote">정답 없이 편하게, 서로 다른 직군·경험이 섞여 새 시각 하나씩 가져가는 시간이에요. 먼저 말 건네기 <span class="heart">♥</span></p>
+    <p class="legend">이름 옆 숫자 = 원래 조 · 색 = 조별 구분</p>
+
+  </div>
+</div>
+
+</body>
+</html>
