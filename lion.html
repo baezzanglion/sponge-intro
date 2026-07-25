@@ -135,6 +135,8 @@
     font-size:1.05rem;margin-top:12px;line-height:1.5;
   }
 
+  .fade-tip{margin-top:10px;font-size:.72rem;color:var(--ink-soft);text-align:center;line-height:1.5}
+  .fade-tip b{color:var(--sea-deep)}
   .notice{margin-top:14px;font-size:.8rem;color:var(--ink-soft);background:var(--paper-deep);border-radius:10px;padding:10px 13px;line-height:1.65}
   .notice.err{color:#8C3B2A;background:#F6E4DC}
   .notice b{color:var(--sea-deep)}
@@ -231,6 +233,7 @@
     📷 사진 찍기
     <span>누르면 카메라가 열려요</span>
   </button>
+  <button class="btn ghost" id="noPhotoBtn" style="margin-top:10px">✍️ 사진 없이 응원 카드만 만들기</button>
   <input type="file" id="camInput" accept="image/*" capture="user" style="display:none">
 
   <div class="preview-area" id="previewArea">
@@ -251,6 +254,7 @@
       <button class="btn" id="savePng">📤 공유/저장</button>
       <button class="btn warm" id="printBtn">🖨 인쇄하기</button>
     </div>
+    <div class="fade-tip">🧾 인쇄본(감열지)은 시간이 지나면 옅어질 수 있어요. 오래 간직하려면 <b>📤 공유/저장</b>으로 폰에 남겨 두세요.</div>
 
     <div class="progress" id="prog">
       <span id="progText">인쇄 중…</span>
@@ -337,7 +341,7 @@ const store = {
 };
 const $ = id => document.getElementById(id);
 
-/* ================= 축복 말씀 풀 ================= */
+/* ================= 응원·행운 문구 풀 ================= */
 const ONE_LINERS = [
   "맑은 날이 너무 또랑또랑해서 살짝 부담스럽기도 하네요","목요일은 늘 금요일을 살짝 시기하죠","흐린 하늘은 결정장애가 좀 있는 것 같아요","안개는 봄을 좀 더 부르고 싶어하는 모양이에요",
   "출근길 졸음과 커피가 줄다리기하는 아침","안개 낀 아침은 세상이 슬쩍 흐림 모드를 켠 느낌","흐린 하늘 아래선 모두가 조금씩 느려져요","빗소리만으로도 BGM이 되는 아침이네요",
@@ -783,6 +787,7 @@ function ditherCanvas(src){
 
 let lastBits = null, lastH = 0;
 let savedThisCard = false;   // 현재 카드가 갤러리에 이미 저장됐는지 (인쇄·공유 중복 방지)
+let previewReady = false;    // 미리보기 카드가 준비됐는지 (사진 없이 만든 카드 포함)
 
 /* 실제 그릴 문장을 넘겨 해당 글자의 폰트 조각까지 확실히 로드 (한글 서브셋 깨짐 방지) */
 async function loadCardFonts(){
@@ -826,6 +831,7 @@ async function renderPreview(){
   $('verseTag').textContent = '🍀 오늘의 행운지수 ' + fortune.score + '점';
   $('previewArea').style.display = 'block';
   savedThisCard = false;   // 새 카드 → 아직 미저장 상태
+  previewReady = true;
 }
 
 /* 인쇄 직전: 컬러 탭 상태였다면 인쇄용 비트를 다시 생성 */
@@ -891,6 +897,13 @@ function stopCam(){
 
 $('shootBtn').onclick = ()=>{ syncFacing(); startCam(); };
 $('retake').onclick = ()=>{ syncFacing(); startCam(); };
+/* ✍️ 사진 없이 카드만: 촬영이 부담스러운 분용 — 응원+이름만 */
+$('noPhotoBtn').onclick = async ()=>{
+  photoBitmap = null;
+  fortune = rollFortune();
+  await renderPreview();
+  window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'});
+};
 $('camClose').onclick = ()=>{ stopCam(); $('camView').classList.remove('show'); };
 $('camFlip').onclick = ()=>{
   facing = (facing==='user') ? 'environment' : 'user';
@@ -999,7 +1012,7 @@ $('savePng').onclick = ()=>{
   const type = isColor ? 'image/jpeg' : 'image/png';
   const ext  = isColor ? 'jpg' : 'png';
   const tag  = isColor ? '컬러' : '인쇄';
-  const n = ($('elderName').value.trim() || '말씀사진');
+  const n = ($('elderName').value.trim() || '행운사진');
   const fname = `${n}_${dateStamp()}_${tag}.${ext}`;
   $('previewCanvas').toBlob(async b=>{
     const file = new File([b], fname, {type});
@@ -1217,7 +1230,7 @@ function showErr(msg){
   setTimeout(()=>{ n.classList.remove('err'); n.innerHTML = '<b>처음 설정:</b> 프린터 전원을 켜고 [🖨 인쇄하기]를 누르면 블루투스 기기 선택창이 떠요. GB / GT / MX / YT / SC로 시작하는 이름을 선택하면 연결됩니다.'; }, 8000);
 }
 
-$('printBtn').onclick = async ()=>{ if(photoBitmap){ saveToGallery(); await ensurePrintBits(); doPrint(lastBits, lastH); } };
+$('printBtn').onclick = async ()=>{ if(previewReady){ saveToGallery(); await ensurePrintBits(); doPrint(lastBits, lastH); } };
 $('printBtnB').onclick = ()=>{
   $('modalBg').classList.remove('show');
   if(lastBits) doPrintB(lastBits, lastH);
@@ -1245,7 +1258,7 @@ $('feedTest').onclick = async ()=>{
   }catch(e){ log('이송 테스트 오류: '+e.message); }
 };
 
-/* 테스트 인쇄: 성함 없이 말씀만 있는 작은 카드 */
+/* 테스트 인쇄: 성함 없이 문구만 있는 작은 카드 */
 $('testPrint').onclick = async ()=>{
   await loadCardFonts();
   const c = document.createElement('canvas');
@@ -1322,7 +1335,7 @@ async function galDelete(id){
 
 /* 현재 카드를 갤러리에 1회 저장 (인쇄·공유에서 호출, 중복 방지) */
 async function saveToGallery(){
-  if(savedThisCard || !photoBitmap) return;
+  if(savedThisCard || !previewReady) return;
   savedThisCard = true;               // 먼저 잠가 중복 저장 방지
   try{
     const card = buildCard('color');  // 컬러 원본으로 보관
@@ -1389,7 +1402,7 @@ $('galleryClose').onclick = closeGallery;
 $('gzClose').onclick = closeGZoom;
 $('gzShare').onclick = async ()=>{
   if(!gzCur) return;
-  const n = (gzCur.name || '말씀사진');
+  const n = (gzCur.name || '행운사진');
   const fname = `${n}_${(gzCur.ymd||'').replace(/\./g,'')}_컬러.jpg`;
   const file = new File([gzCur.blob], fname, {type:'image/jpeg'});
   if(navigator.canShare && navigator.canShare({files:[file]})){
