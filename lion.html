@@ -43,6 +43,12 @@
     background:var(--card);font-family:'Gowun Batang',serif;font-size:1.15rem;color:var(--ink);
   }
   input:focus{outline:2px solid var(--sea);border-color:transparent}
+  .manual-input{
+    width:100%;padding:12px 15px;margin-top:4px;border:1.5px solid var(--line);border-radius:12px;
+    background:var(--card);font-family:'Gowun Batang',serif;font-size:1.1rem;color:var(--ink);
+    resize:vertical;line-height:1.5;
+  }
+  .manual-input:focus{outline:2px solid var(--sea);border-color:transparent}
   .chips{display:flex;gap:8px;margin-top:4px}
   .chip{
     padding:9px 16px;border-radius:20px;border:1.5px solid var(--line);background:var(--card);
@@ -222,6 +228,13 @@
 
   <label>성함 <span style="font-weight:400;opacity:.7">— 호칭까지 적으면 그대로 인쇄돼요</span></label>
   <input type="text" id="elderName" placeholder="예) 배짱" autocomplete="off">
+
+  <label>내용</label>
+  <div class="chips" id="contentModeChips" style="margin-bottom:4px">
+    <button class="chip sel" data-mode="random">🍀 행운 (랜덤)</button>
+    <button class="chip" data-mode="manual">💌 메시지 직접</button>
+  </div>
+  <textarea id="manualInput" class="manual-input" rows="2" placeholder="적고 싶은 메시지를 적어주세요 (나에게, 또는 누군가에게)" style="display:none"></textarea>
 
   <label>카메라</label>
   <div class="chips" id="facingChips" style="margin-bottom:4px">
@@ -583,6 +596,8 @@ function buildCard(mode){
   const S = isColor ? 3 : 1;
   const CW = W * S;
   const f = fortune;
+  const manual = manualMode && manualText.trim();          // 직접 적기(메시지) 모드
+  const msg = manual ? manualText.trim() : ('"'+f.oneLiner+'"');
   const name = $('elderName').value.trim();
   const c = document.createElement('canvas');
   const ctx = c.getContext('2d');
@@ -590,11 +605,11 @@ function buildCard(mode){
   // --- 높이 계산을 위한 가측정 ---
   const photoH = photoBitmap ? Math.round(CW * Math.min(1.15, photoBitmap.height/photoBitmap.width)) : 0;
   ctx.font = `700 ${32*S}px "Gowun Batang", serif`;
-  const oneLines = balancedWrap(ctx, '"'+f.oneLiner+'"', CW-56*S);
+  const oneLines = balancedWrap(ctx, msg, CW-56*S);
   ctx.font = `${24*S}px "Gowun Batang", serif`;
-  const cmtLines = balancedWrap(ctx, f.comment, CW-56*S);
+  const cmtLines = manual ? [] : balancedWrap(ctx, f.comment, CW-56*S);
   const nameBlock = name ? 74*S : 0;
-  const H = (8+34+18)*S + photoH + 14*S + nameBlock + 20*S + oneLines.length*46*S + 20*S + cmtLines.length*34*S + (22+30+44)*S;
+  const H = (8+34+18)*S + photoH + 14*S + nameBlock + 20*S + oneLines.length*46*S + 20*S + cmtLines.length*34*S + (22 + (manual?0:30) + 44)*S;
   c.width = CW; c.height = H;
 
   // --- 배경 ---
@@ -655,20 +670,22 @@ function buildCard(mode){
   ctx.moveTo(30*S,y); ctx.lineTo(CW-30*S,y); ctx.stroke(); ctx.setLineDash([]);
   y += 20*S;
 
-  // 응원·위로 문구 (최상단, 크게)
+  // 응원·메시지 (최상단, 크게)
   ctx.font = `700 ${32*S}px "Gowun Batang", serif`;
   ctx.fillStyle = isColor ? '#2B2620' : '#000';
   for(const line of oneLines){ y += 46*S; ctx.fillText(line, CW/2, y); }
   y += 20*S;
-  // 보조 멘트 (코멘트)
+  // 보조 멘트 (코멘트) — 메시지 모드에선 생략
   ctx.font = `${24*S}px "Gowun Batang", serif`;
   ctx.fillStyle = isColor ? '#6B6152' : '#000';
   for(const line of cmtLines){ y += 34*S; ctx.fillText(line, CW/2, y); }
   y += 22*S;
-  // 행운지수 (보조로 작게)
-  ctx.font = `700 ${22*S}px "Gaegu", cursive`;
-  ctx.fillStyle = isColor ? '#B8461F' : '#000';
-  ctx.fillText('오늘의 행운지수 ' + f.score, CW/2, y+22*S); y += 30*S;
+  // 행운지수 (랜덤 모드에서만)
+  if(!manual){
+    ctx.font = `700 ${22*S}px "Gaegu", cursive`;
+    ctx.fillStyle = isColor ? '#B8461F' : '#000';
+    ctx.fillText('오늘의 행운지수 ' + f.score, CW/2, y+22*S); y += 30*S;
+  }
 
   // 하단 문구
   ctx.font = `${22*S}px "Gaegu", cursive`;
@@ -788,12 +805,14 @@ function ditherCanvas(src){
 let lastBits = null, lastH = 0;
 let savedThisCard = false;   // 현재 카드가 갤러리에 이미 저장됐는지 (인쇄·공유 중복 방지)
 let previewReady = false;    // 미리보기 카드가 준비됐는지 (사진 없이 만든 카드 포함)
+let manualMode = false;      // 내용: false=랜덤 행운 / true=직접 메시지
+let manualText = '';         // 직접 적은 메시지
 
 /* 실제 그릴 문장을 넘겨 해당 글자의 폰트 조각까지 확실히 로드 (한글 서브셋 깨짐 방지) */
 async function loadCardFonts(){
   const f = fortune;
   const d = new Date();
-  const batangText = '"'+f.oneLiner+'" ' + f.comment + ' ' + `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 0123456789`;
+  const batangText = (manualText||'') + ' "'+f.oneLiner+'" ' + f.comment + ' ' + `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 0123456789`;
   const gaeguText = cfg.church + ' ' + cfg.footer + ' ' + ($('elderName').value.trim()||'') + ' 오늘의 행운지수 굿모닝라이언 테스트 인쇄 진하기';
   try{
     await Promise.all([
@@ -828,7 +847,7 @@ async function renderPreview(){
     pc.width = card.width; pc.height = card.height;
     pc.getContext('2d').drawImage(card,0,0);
   }
-  $('verseTag').textContent = '🍀 오늘의 행운지수 ' + fortune.score + '점';
+  $('verseTag').textContent = (manualMode && manualText.trim()) ? '💌 메시지 카드' : ('🍀 오늘의 행운지수 ' + fortune.score + '점');
   $('previewArea').style.display = 'block';
   savedThisCard = false;   // 새 카드 → 아직 미저장 상태
   previewReady = true;
@@ -904,6 +923,30 @@ $('noPhotoBtn').onclick = async ()=>{
   await renderPreview();
   window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'});
 };
+
+/* 내용 모드: 랜덤 행운 ↔ 직접 메시지 */
+function syncContentMode(){
+  document.querySelectorAll('#contentModeChips .chip').forEach(c=>
+    c.classList.toggle('sel', (c.dataset.mode==='manual')===manualMode));
+  $('manualInput').style.display = manualMode ? 'block' : 'none';
+  $('rerollVerse').style.display = manualMode ? 'none' : '';
+}
+document.querySelectorAll('#contentModeChips .chip').forEach(c=>{
+  c.onclick = async ()=>{
+    manualMode = (c.dataset.mode==='manual');
+    syncContentMode();
+    if(manualMode) $('manualInput').focus();
+    if(previewReady) await renderPreview();
+  };
+});
+let manualTimer = null;
+$('manualInput').oninput = e=>{
+  manualText = e.target.value;
+  if(!previewReady) return;
+  clearTimeout(manualTimer);
+  manualTimer = setTimeout(()=>renderPreview(), 350);   // 타이핑 멈추면 미리보기 갱신
+};
+syncContentMode();
 $('camClose').onclick = ()=>{ stopCam(); $('camView').classList.remove('show'); };
 $('camFlip').onclick = ()=>{
   facing = (facing==='user') ? 'environment' : 'user';
