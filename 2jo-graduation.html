@@ -319,62 +319,20 @@
   찌니(2주차) · 끼리(3주차) · 망고(4주차) · 세계로 &amp; 레미(5주차)<br><br>
   <div class="big">6주 · 12명 · 이탈 0 · 출석률 전체 1등 🥇</div>
   스폰지클럽이 끝나도 — 우리는 서로의 OS를 응원합니다.<br>
-  <span style="font-family:'Gaegu',cursive;color:var(--persimmon-deep)">2조 · 예수님이... 아니, 우리가 서로를 사랑합니다 🧡</span>
+  <span style="font-family:'Gaegu',cursive;color:var(--persimmon-deep)">2조 · 예수님이... 아니, 우리가 서로를 사랑합니다 🧡</span><br>
+  <span style="font-size:.75rem;opacity:.7">🎵 Gymnopédie No. 1 — Erik Satie · perf. Kevin MacLeod (CC BY 3.0)</span>
 </footer>
 
 </div>
 
+<audio id="bgm" loop preload="none" src="https://baezzanglion.github.io/sponge-intro/2jo-music.m4a"></audio>
 <button id="musicBtn">🎵 음악과 함께 보기</button>
 <script>
-/* 잔잔한 오르골풍 생성 음악 — 외부 음원 없이 브라우저가 직접 연주 (저작권 무관) */
-let ac = null, master = null, playing = false, timer = null;
-
-function setup(){
-  ac = new (window.AudioContext || window.webkitAudioContext)();
-  master = ac.createGain();
-  master.gain.value = 0.13;                    // 잔잔하게
-  const delay = ac.createDelay(1.5);
-  delay.delayTime.value = 0.42;
-  const fb = ac.createGain(); fb.gain.value = 0.3;
-  delay.connect(fb); fb.connect(delay);        // 은은한 공간감
-  master.connect(ac.destination);
-  master.connect(delay); delay.connect(ac.destination);
-}
-
-/* A단조 펜타토닉 — 따뜻하고 차분한 결 */
-const SCALE = [220.0, 261.63, 293.66, 329.63, 392.0, 440.0, 523.25, 587.33];
-let idx = 3, dir = 1;
-
-function pluck(freq, when, vol){
-  const o1 = ac.createOscillator(); o1.type = 'triangle'; o1.frequency.value = freq;
-  const o2 = ac.createOscillator(); o2.type = 'sine'; o2.frequency.value = freq * 2;
-  const g = ac.createGain();
-  g.gain.setValueAtTime(0, when);
-  g.gain.linearRampToValueAtTime(vol, when + 0.02);   // 오르골 튕김
-  g.gain.exponentialRampToValueAtTime(0.0001, when + 2.6);
-  o1.connect(g); o2.connect(g); g.connect(master);
-  o1.start(when); o2.start(when);
-  o1.stop(when + 2.8); o2.stop(when + 2.8);
-}
-
-function step(){
-  const t = ac.currentTime + 0.05;
-  // 완만한 랜덤워크 멜로디
-  if (Math.random() < 0.3) dir = -dir;
-  idx = Math.max(0, Math.min(SCALE.length - 1, idx + dir * (Math.random() < 0.7 ? 1 : 2)));
-  pluck(SCALE[idx], t, 0.5 + Math.random() * 0.2);
-  if (Math.random() < 0.35) pluck(SCALE[Math.max(0, idx - 3)], t + 0.4, 0.25);  // 가끔 화음
-  if (Math.random() < 0.15) pluck(110, t, 0.3);                                  // 낮은 뿌리음
-  timer = setTimeout(step, 950 + Math.random() * 500);
-}
-
+const bgm = document.getElementById('bgm');
+bgm.volume = 0.5;
 document.getElementById('musicBtn').onclick = function(){
-  if (!ac) setup();
-  if (ac.state === 'suspended') ac.resume();
-  playing = !playing;
-  this.classList.toggle('on', playing);
-  if (playing){ this.textContent = '🎵 연주 중 — 멈추기'; step(); }
-  else { this.textContent = '🎵 음악과 함께 보기'; clearTimeout(timer); }
+  if (bgm.paused){ bgm.play(); this.classList.add('on'); this.textContent = '🎵 연주 중 — 멈추기'; }
+  else { bgm.pause(); this.classList.remove('on'); this.textContent = '🎵 음악과 함께 보기'; }
 };
 </script>
 </body>
