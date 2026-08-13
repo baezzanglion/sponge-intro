@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>스폰지클럽 조장 플레이북 — 다정함이 작동하게 만드는 장치들</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<style>
+:root{
+  --yellow:#F6C445; --yellow-deep:#E8A812; --yellow-pale:#FBE9B6;
+  --ink:#221A0F; --ink-soft:#5C4E38; --ink-faint:#6E5F45;
+  --paper:#FFFDF6; --card:#FFFFFF;
+  --soak:#0F6B5C; --soak-pale:#E2F0ED;
+  --warn:#C6431F; --warn-pale:#FBEAE3;
+  --line:#EADFC8;
+  --radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scrollbar-color:var(--yellow-deep) var(--paper)}
+html::-webkit-scrollbar{width:12px}
+html::-webkit-scrollbar-track{background:var(--paper)}
+html::-webkit-scrollbar-thumb{background:var(--yellow-deep);border-radius:8px;border:3px solid var(--paper)}
+::selection{background:var(--yellow);color:var(--ink)}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px;border-radius:4px}
+body{
+  font-family:'Pretendard',-apple-system,'Apple SD Gothic Neo',sans-serif;
+  background:var(--paper);color:var(--ink);line-height:1.75;font-size:16px;
+}
+b,strong{font-weight:800}
+a{color:var(--soak);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+
+/* ───────── 상단 고정바: 장 서랍 네비 ───────── */
+#topbar{
+  position:sticky;top:0;z-index:60;background:var(--ink);color:#FFF8E8;
+  display:flex;align-items:center;gap:16px;padding:10px 18px;
+  box-shadow:0 4px 18px rgba(34,26,15,.28);
+}
+#topbar .logo{font-family:'Jua';font-size:1.02rem;letter-spacing:.02em;white-space:nowrap;color:var(--yellow)}
+#topbar .logo small{display:block;font-family:'Pretendard';font-size:.62rem;font-weight:700;color:#C9B888;letter-spacing:.08em;margin-top:-3px}
+#chapnav{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;flex:1;padding:2px 0}
+#chapnav::-webkit-scrollbar{display:none}
+#chapnav a{
+  font-size:.78rem;font-weight:700;color:#C9B888;text-decoration:none;
+  padding:6px 11px;border-radius:999px;white-space:nowrap;transition:.15s;
+}
+#chapnav a:hover{color:var(--yellow)}
+#chapnav a.on{background:var(--yellow);color:var(--ink)}
+#trail-link{
+  font-size:.78rem;font-weight:800;color:var(--ink);background:var(--yellow);
+  text-decoration:none;padding:7px 13px;border-radius:999px;white-space:nowrap;transition:.15s;
+}
+#trail-link:hover{background:#FFD35E}
+
+/* ───────── 히어로 ───────── */
+header.hero{background:var(--yellow);color:var(--ink);position:relative;overflow:hidden;padding:80px 24px 88px}
+.pores{position:absolute;inset:0;z-index:1;pointer-events:none}
+.hero-inner{max-width:880px;margin:0 auto;position:relative;z-index:2}
+.hero h1{font-family:'Jua';font-size:clamp(2.3rem,5.6vw,4rem);line-height:1.24;letter-spacing:-.01em}
+.hero .lead{font-size:clamp(1.02rem,2.2vw,1.22rem);margin-top:20px;max-width:36em;color:#4A3A14;font-weight:500}
+.hero .lead strong{color:var(--ink)}
+.hero-facts{display:flex;gap:26px;margin-top:32px;flex-wrap:wrap}
+.hero-facts div{border-top:3px solid var(--ink);padding-top:10px;min-width:130px}
+.hero-facts b{font-family:'Jua';font-size:1.45rem;display:block;font-weight:400}
+.hero-facts span{font-size:.85rem;color:#4A3A14;font-weight:600}
+.hero-note{margin-top:30px;font-size:.9rem;color:#4A3A14;font-weight:600}
+
+/* ───────── 본문 ───────── */
+main{max-width:880px;margin:0 auto;padding:20px 20px 80px}
+.chapter{margin:72px 0 0;scroll-margin-top:76px}
+.chap-band{
+  background:var(--yellow);border-radius:var(--radius);
+  padding:18px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  border-bottom:5px solid var(--yellow-deep);box-shadow:0 8px 22px rgba(90,72,40,.14);
+}
+.chap-band .no{
+  font-family:'JetBrains Mono',monospace;font-weight:600;font-size:1rem;
+  background:var(--ink);color:var(--yellow);border-radius:10px;padding:4px 12px;flex:none;
+  transition:background .3s,color .3s;
+}
+.chap-band .no.soaked{background:var(--soak);color:#fff}
+.soak-word{
+  font-size:.75rem;font-weight:800;color:#fff;background:var(--soak);
+  border-radius:999px;padding:3px 12px;flex:none;
+  transform:scale(0);transition:transform .25s cubic-bezier(.16,1,.3,1);
+}
+.soak-word.show{transform:scale(1)}
+.chap-band h2{font-family:'Jua';font-size:clamp(1.25rem,3vw,1.6rem);line-height:1.3;flex:1 1 240px;font-weight:400}
+.chap-intro{margin:18px 4px 0;color:var(--ink-soft);max-width:64ch}
+.chapter h3{font-size:1.12rem;font-weight:800;letter-spacing:-.01em;margin:34px 0 10px}
+.chapter h4{font-size:1rem;font-weight:800;margin:24px 0 8px;color:#3C321F}
+.chapter p{margin:10px 0;max-width:68ch}
+.chapter ul,.chapter ol{margin:10px 0 10px 22px;max-width:66ch}
+.chapter li{margin:6px 0}
+.chapter li::marker{color:var(--yellow-deep);font-weight:700}
+
+/* 카드 */
+.box{
+  background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);
+  padding:20px 24px;margin:18px 0;box-shadow:0 3px 14px rgba(90,72,40,.06);
+}
+.box > :first-child{margin-top:0}
+.box > :last-child{margin-bottom:0}
+.device{position:relative}
+.device .badge{
+  position:absolute;top:-12px;left:18px;background:var(--soak);color:#fff;
+  font-size:.72rem;font-weight:800;letter-spacing:.05em;padding:3px 12px;border-radius:999px;
+}
+.device h3{margin-top:4px}
+
+/* 인용 */
+blockquote{
+  margin:14px 0;padding:14px 20px;background:var(--yellow-pale);
+  border-radius:var(--radius);color:#4A3A14;font-weight:500;max-width:66ch;
+}
+blockquote.voice{background:var(--card);border:1.5px dashed var(--yellow-deep);font-style:normal}
+blockquote b{color:var(--ink)}
+blockquote .src{display:block;margin-top:6px;font-size:.8rem;font-weight:700;color:var(--ink-faint);font-style:normal}
+
+/* 콜아웃 */
+.callout{display:flex;gap:12px;align-items:flex-start;border-radius:12px;padding:13px 16px;margin:14px 0;font-size:.95rem;max-width:66ch}
+.callout svg{flex:none;margin-top:3px}
+.callout.tip{background:var(--soak-pale);color:#0B4A40}
+.callout.tip b{color:var(--soak)}
+.callout.warn{background:var(--warn-pale);color:#8A3418}
+.callout.warn b{color:var(--warn)}
+
+/* 표 */
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:.94rem}
+th{background:var(--ink);color:var(--yellow-pale);text-align:left;padding:10px 14px;font-weight:700}
+td{border-bottom:1.5px solid var(--line);padding:10px 14px;vertical-align:top}
+td:first-child{font-weight:700;white-space:normal}
+.tscroll{overflow-x:auto;margin:14px 0}
+.tscroll table{margin:0;min-width:520px}
+
+/* 복붙 문구 카드 */
+.say{
+  background:var(--yellow-pale);border-radius:12px;padding:16px 74px 16px 18px;margin:12px 0;
+  position:relative;font-size:.95rem;color:#4A3A14;max-width:66ch;
+  white-space:pre-line;line-height:1.7;font-weight:500;
+}
+.say:not(:has(button)){padding-right:18px}
+.say b{color:var(--ink)}
+.say button{
+  position:absolute;top:10px;right:10px;font-family:inherit;font-size:.72rem;font-weight:700;
+  background:var(--ink);color:var(--yellow);border:none;border-radius:7px;padding:4px 11px;cursor:pointer;
+}
+.say button.ok{background:var(--soak);color:#fff}
+.say-label{font-size:.8rem;font-weight:800;letter-spacing:.04em;color:var(--ink-faint);margin:18px 0 4px}
+
+/* 체크리스트 */
+.check{border-top:1.5px dashed var(--line);margin-top:14px;padding-top:12px}
+.check label{
+  display:flex;align-items:flex-start;gap:10px;padding:7px 0;cursor:pointer;
+  font-size:.95rem;color:#3C321F;font-weight:500;
+}
+.check input{
+  appearance:none;width:22px;height:22px;flex:none;margin-top:1px;
+  border:2.5px solid var(--line);border-radius:7px;background:#fff;cursor:pointer;
+  display:grid;place-content:center;transition:transform .2s cubic-bezier(.16,1,.3,1),background .2s,border-color .2s;
+}
+.check input::before{
+  content:'';width:12px;height:12px;transform:scale(0);transition:transform .2s cubic-bezier(.16,1,.3,1);
+  background:#fff;clip-path:polygon(14% 44%,0 65%,50% 100%,100% 16%,80% 0%,43% 62%);
+}
+.check input:checked{background:var(--soak);border-color:var(--soak)}
+.check input:checked::before{transform:scale(1)}
+.check label:has(input:checked){color:var(--soak);text-decoration:line-through;text-decoration-color:rgba(15,107,92,.35)}
+
+/* 단계 스텝 */
+.stage{display:flex;gap:14px;margin:16px 0;max-width:68ch}
+.stage .n{
+  flex:none;width:34px;height:34px;border-radius:50%;background:var(--yellow);color:var(--ink);
+  font-family:'JetBrains Mono',monospace;font-weight:600;display:flex;align-items:center;justify-content:center;font-size:.95rem;margin-top:2px;
+}
+.stage .body{flex:1}
+.stage h4{margin:2px 0 6px}
+
+/* 피날레 */
+footer.fin{
+  background:var(--ink);color:#F3E5C0;margin-top:90px;padding:76px 24px 84px;text-align:center;
+  position:relative;overflow:hidden;
+}
+footer.fin .pores{opacity:.8}
+footer.fin h2,footer.fin p,footer.fin blockquote{position:relative;z-index:2}
+footer.fin h2{font-family:'Jua';font-size:clamp(1.5rem,4vw,2.2rem);color:var(--yellow);font-weight:400}
+footer.fin p{max-width:38em;margin:18px auto 0;color:#CBB98F}
+footer.fin blockquote{
+  background:none;border:none;max-width:34em;margin:30px auto 0;padding:0;
+  font-family:'Jua';font-size:clamp(1.25rem,3vw,1.7rem);line-height:1.6;color:#FFF8E8;
+}
+footer.fin .fin-note{margin-top:38px;font-size:.82rem;color:#A99C80}
+footer.fin a{color:var(--yellow)}
+
+@media (max-width:720px){
+  .chap-band{padding:15px 18px}
+  .hero{padding:60px 20px 68px}
+  #topbar .logo small{display:none}
+  .say button{padding:9px 14px;font-size:.8rem}
+  .check label{padding:11px 0}
+  .check input{width:24px;height:24px}
+}
+@media (prefers-reduced-motion: reduce){
+  *{transition:none!important;animation:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<!--
+THESIS: 조장 매뉴얼을 '읽는 문서'가 아니라 '꺼내 쓰는 서랍'으로 만든다 — 온보딩 트레일(여정)의 자매 표면.
+OWN-WORLD: 온보딩 트레일의 DESIGN.md를 상속 — Committed Yellow(#F6C445), soak-teal은 완료·장치 검증의 의미로만, Jua는 장(밴드·히어로·피날레)에만, 다공질 포어가 표면을 스폰지로.
+STORY: 처음 조장을 맡아 막막한 사람이, 자기 잘못이 아니라 장치의 부재였음을 알고, 장별 서랍에서 장치와 문구를 그대로 꺼내 쓴다.
+FIRST VIEWPORT: 노란 스폰지 필드 — "다정함이 작동하게 만드는 장치들", 3팩트(12명 완주·장치 6종·복붙 문구), 상단 장 서랍 네비.
+FORM: 핸드북(서랍장) 구조 — 장 오비 밴드 + 장치 배지 카드 + 복붙 say 카드. 트레일의 세로 레일은 이 표면에 없음(여정이 아니라 참조서이므로).
+FINISH: detector + batched inspection + finish review 후 배포.
+-->
+
+<div id="topbar">
+  <span class="logo">SPONGE CLUB<small>조장 플레이북</small></span>
+  <nav id="chapnav" aria-label="장 이동">
+    <a href="#c1">1 역할</a><a href="#c2">2 타임라인</a><a href="#c3">3 장치 6종</a><a href="#c4">4 마니또</a><a href="#c5">5 케어</a><a href="#c6">6 졸업</a><a href="#c7">7 문구</a><a href="#c8">8 조언</a><a href="#c9">9 운영진께</a><a href="#c10">첫 주 준비</a>
+  </nav>
+  <a id="trail-link" href="https://baezzanglion.github.io/sponge-intro/onboarding.html" target="_blank" rel="noopener">온보딩 트레일</a>
+</div>
+
+<header class="hero">
+  <svg class="pores" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1200 520" aria-hidden="true">
+    <g fill="#E8A812" opacity=".5">
+      <ellipse cx="80" cy="60" rx="26" ry="20"/><ellipse cx="240" cy="140" rx="14" ry="11"/>
+      <ellipse cx="150" cy="330" rx="34" ry="26"/><ellipse cx="380" cy="60" rx="18" ry="14"/>
+      <ellipse cx="480" cy="420" rx="24" ry="18"/><ellipse cx="620" cy="120" rx="12" ry="9"/>
+      <ellipse cx="760" cy="300" rx="30" ry="22"/><ellipse cx="900" cy="90" rx="20" ry="15"/>
+      <ellipse cx="1040" cy="380" rx="26" ry="20"/><ellipse cx="1130" cy="180" rx="15" ry="12"/>
+      <ellipse cx="320" cy="470" rx="16" ry="12"/><ellipse cx="1010" cy="40" rx="12" ry="9"/>
+    </g>
+  </svg>
+  <div class="hero-inner">
+    <h1>다정함이 작동하게<br>만드는 장치들</h1>
+    <p class="lead"><strong>3기 조장님께 드리는 실전 기록.</strong> 2기 2조 운영 기록과 2기 회고(운영진 8명·참여자 24명)를 반영해 정리했습니다. 정답이 아니라 <strong>한 조의 기록</strong>입니다. 가져다 쓰시고, 여러분 조에 맞게 바꿔주세요.</p>
+    <div class="hero-facts">
+      <div><b>12명 완주</b><span>2조 이탈 0명의 기록</span></div>
+      <div><b>장치 6종</b><span>효과를 확인한 것만</span></div>
+      <div><b>그대로 복붙</b><span>공지·독려 문구 5종</span></div>
+    </div>
+    <p class="hero-note">작성: 2기 2조 조장 배짱(박종배) · 2026.08</p>
+  </div>
+</header>
+
+<main>
+
+<!-- ═══ 서문 ═══ -->
+<section class="chapter" id="c0">
+  <div class="chap-band"><span class="no">시작</span><h2>이 문서가 필요한 이유</h2></div>
+  <p class="chap-intro">2기 회고에서 이런 결론이 나왔습니다.</p>
+  <blockquote>"조원 만족도가 <b>조장이 어떤 장치를 굴렸는가</b>에 크게 좌우됐다. 좋은 조는 조장이 스스로 발명해서 좋았고, 그렇지 못한 조는 그 장치가 없어서 아쉬웠다. 이건 조장 개인의 역량 문제로 두기보다 <b>운영이 기본값으로 제공해야 할 것</b>에 가깝다."<span class="src">— 2기 회고 정리 문서</span></blockquote>
+  <p>즉, <b>잘된 조는 조장이 대단해서가 아니라 장치가 있었기 때문</b>입니다. 제가 알게 된 장치들을 여기 다 옮겨 놓았습니다. 처음부터 발명하지 않으셔도 됩니다. <b>가져다 쓰시고, 더 좋게 바꿔서 다음 기수에 물려주세요.</b></p>
+
+  <div class="box">
+    <p><b>믿기지 않으신다면 — 이 문서를 쓴 사람의 이력을 공개합니다.</b></p>
+    <p>저는 6주 동안 <b>조별 MVP를 한 번도 받지 못했습니다.</b> 남들이 만든 걸 보며 주눅 들어 있었고, AI를 잘 쓰지 못한다고 생각했습니다. 그런 제가 조장을 맡았고, 6주 뒤 우리 조는 12명 전원이 완주했습니다.</p>
+    <p>제가 잘 가르쳐서가 아닙니다. 이 문서에 있는 <b>장치들이 대신 일했기 때문</b>입니다.</p>
+  </div>
+
+  <p>하버드 비즈니스 리뷰에 이런 말이 있습니다.</p>
+  <blockquote><b>"수많은 혁신이 실패하는 이유는, 뜻밖에도 다정함이 부족하기 때문이다."</b> 혁신을 완성시키는 건 가장 빠른 사람이 아니라, 사람들 사이를 오가며 맥락을 번역하고 연결하는 <b>'다정한 연결자(bridger)'</b>다.<span class="src">— HBR, Why Great Innovations Fail to Scale</span></blockquote>
+  <p><b>조장이 바로 그 자리입니다.</b> 기술이 부족해도 됩니다. 저도 부족했습니다. 이 문서가 나머지를 전부 채워주지는 못하겠지만, 적어도 맨손으로 시작하지는 않게 해드릴 겁니다.</p>
+
+  <h3>그리고 미리 말씀드리고 싶은 것 하나</h3>
+  <p>2기 조장님들의 회고에는 이런 말들이 있었습니다.</p>
+  <blockquote class="voice">"처음 조장을 맡아서 해봤는데 생각보다 어려워서 너무 슬펐어요"<br>"모이면 다들 이야기도 잘하는 우리 조였는데 평일은 조용했다. '조장 문제였겠지…' 라고 생각하고 있습니다"<br>"나는 조장인가 유닛장인가 스폰지인가의 경계에서 내 역할을 찾는 어려움이 있었어요"</blockquote>
+  <p><b>조장 잘못이 아닙니다.</b> 도구가 없었을 뿐입니다. 평일 조 채널이 조용한 건 조장의 인품 문제가 아니라 <b>"매일 굴러가는 장치"의 부재</b>이고, 그건 3장에서 해결합니다.</p>
+</section>
+
+<!-- ═══ 1장 ═══ -->
+<section class="chapter" id="c1">
+  <div class="chap-band"><span class="no">1</span><h2>조장이 하는 일 (딱 4가지)</h2></div>
+  <p class="chap-intro">6주간 했던 크고 작은 일들을 기수가 끝나고 정리해 보니, 전부 네 가지 원리로 묶였습니다. 새로운 상황이 와서 "이럴 땐 뭘 하지?" 싶을 때, 이 네 가지 중 하나를 고르면 됩니다.</p>
+  <div class="tscroll"><table>
+    <tr><th>역할</th><th>무엇을</th><th>왜</th></tr>
+    <tr><td>리듬 지킴이</td><td>매주 같은 요일·같은 형식으로 공지·독려</td><td>사람은 잊는다. 리듬이 기억을 대신한다</td></tr>
+    <tr><td>연결자</td><td>조원↔조원, 조원↔다른 조 좋은 사례를 잇기</td><td>조장 혼자 가르치는 것보다 훨씬 강력</td></tr>
+    <tr><td>바닥 올리기</td><td>뒤처진 한 명을 끝까지 붙잡기</td><td>이탈은 전염된다. 첫 이탈을 막으면 조가 산다</td></tr>
+    <tr><td>천장 올리기</td><td>잘하는 조원에게 무대·기회 주기</td><td>잘하는 사람도 인정이 필요하다</td></tr>
+  </table></div>
+  <div class="callout warn">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 21h20L12 3z"/><path d="M12 10v5M12 18.2v.3"/></svg>
+    <div><b>하지 않아도 되는 일:</b> 조원 과제 대신 해주기 · 기술 질문 다 답하기 · 매일 챙기기. <b>조장은 잘 가르치는 사람이 아니라, 아무도 놓치지 않는 판을 까는 사람입니다.</b> 실력으로 이끌 필요 없습니다. 아래 장치들이 대신 이끕니다.</div>
+  </div>
+  <h3>조장+유닛장 겸임이라면 (2기 최다 번아웃 지점)</h3>
+  <p>2기 회고에서 겸임하신 분들이 공통으로 "두 역할 모두 온전히 못 했다"고 적었습니다. 겸임한다면 <b>조 운영은 이 문서의 장치로 자동화하고, 본인 에너지는 유닛에 쓰세요.</b> 장치가 굴러가면 조장이 매일 붙어 있지 않아도 조는 살아 있습니다. (3장 참고)</p>
+</section>
+
+<!-- ═══ 2장 ═══ -->
+<section class="chapter" id="c2">
+  <div class="chap-band"><span class="no">2</span><h2>주차별 타임라인</h2></div>
+  <p class="chap-intro">3기는 약 5주·7회차 구조입니다. 주차 번호보다 <b>순서와 시점</b>에 맞춰 보세요.</p>
+
+  <h3>셋업데이 (0주차) — 가장 중요한 날</h3>
+  <p>2기 회고에서 <b>운영진·참여자 양쪽 모두가 1순위 개선 과제</b>로 꼽은 지점이 여기서 생깁니다.</p>
+  <blockquote class="voice">"셋업데이~2주차에 벌어진 격차가 기수 내내 그대로 유지됨" <span class="src">— 운영진 회고</span>"셋업데이에서 타이머를 만드는데 모두들 뚝딱뚝딱. 내가 이 수업을 따라갈 수 있을까?" <span class="src">— 참여자 회고</span></blockquote>
+
+  <div class="box device">
+    <span class="badge">NEW</span>
+    <h3>온보딩 트레일부터 뿌리세요</h3>
+    <p>셋업데이 <b>전에</b> 조원들이 혼자 따라오게 만든 셀프 가이드가 있습니다.</p>
+    <p><a href="https://baezzanglion.github.io/sponge-intro/onboarding.html" target="_blank" rel="noopener">스폰지클럽 온보딩 트레일</a></p>
+    <p>슬랙 입장 → 깃허브 초대 수락 → 클로드 코드 설치 → 첫 과제 제출 → 막혔을 때 대처까지, 체크리스트를 채우며 내려가는 구조입니다. 아래 조장 체크리스트와 1:1로 대응하므로, 조장은 <b>"가이드 몇 번 캠프까지 가셨어요?"</b> 한 마디만 물으면 됩니다.</p>
+  </div>
+
+  <div class="box">
+    <h4>조장 체크리스트 (조원별 1:1, DM으로)</h4>
+    <div class="check">
+      <label><input type="checkbox" data-ck="p01">슬랙 이름 형식 변경 (N기_닉네임(본명))</label>
+      <label><input type="checkbox" data-ck="p02">슬랙 자체가 처음인지 확인 — 2기 참여자 상당수가 슬랙이 처음이었습니다</label>
+      <label><input type="checkbox" data-ck="p03">공지 채널 접근 가능 여부</label>
+      <label><input type="checkbox" data-ck="p04">깃허브 레포 초대 수락 여부 — 가장 많이 막히는 지점</label>
+      <label><input type="checkbox" data-ck="p05">노트북 환경(윈도우/맥) — 윈도우 사용자는 초반 설치에서 훨씬 많이 막힘</label>
+      <label><input type="checkbox" data-ck="p06">클로드 코드 설치·첫 실행 성공</label>
+    </div>
+  </div>
+  <div class="callout tip">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></svg>
+    <div><b>핵심 팁:</b> 채널에 뿌리지 말고 <b>DM으로 한 명씩.</b> "다 되셨나요?"라고 물으면 안 된 사람도 "네"라고 합니다. <b>"화면 캡처 한 장만 보여주세요"</b>가 확실합니다.</div>
+  </div>
+  <div class="callout warn">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 21h20L12 3z"/><path d="M12 10v5M12 18.2v.3"/></svg>
+    <div><b>초반 이탈 신호 3가지 (하나라도 보이면 즉시 1:1)</b><br>① 셋업데이 이후 3일간 채널에 아무 발화 없음 ② 첫 과제 마감일에 폴더가 비어 있음 ③ <b>"저는 개발을 몰라서…"를 두 번 이상 말함</b> — 가장 확실한 신호</div>
+  </div>
+
+  <h3>1주차 — 관계 만들기</h3>
+  <ul>
+    <li><b>조원 소개 스레드</b> — 자기소개 제출물을 조장이 읽고, 조 채널에 한 명씩 소개. 본인이 쓰는 것보다 조장이 소개해주면 관계가 훨씬 빨리 열립니다</li>
+    <li><b>조별 미니 목표 정하기</b> — "우리 조는 전원 완주" 같은 목표를 <b>조원들이 직접</b> 정하게 (2기 회고 복수 추천)</li>
+    <li><b>마니또(마음배달) 시작</b> → 4장</li>
+    <li><b>조장이 먼저 제출</b> — 조장 과제가 채널에 먼저 올라가면 나머지가 따라옵니다</li>
+    <li><b>각자 닉네임의 의미를 알아두세요</b> — 그리고 부를 때마다 그 이야기를 꺼내세요. "이름을 기억한다"를 넘어 "당신의 이야기를 기억한다"는 신호가 됩니다. 비용 0에 효과는 최상급인 장치입니다</li>
+  </ul>
+
+  <h3>중반 (오프라인 모임 전후) — 관계 전환점</h3>
+  <p>오프라인 모임은 2기 회고에서 <b>"가장 기억에 남는 순간" 1위</b>였습니다. 조장이 할 일:</p>
+  <ul>
+    <li><b>모임 전후로 조끼리 따로 모이기</b> — 본 모임 앞뒤로 식사·티타임 30분이면 충분합니다. 2기 회고에서 "오프라인 전 같은 조 몇 명과 식사한 것"이 최고의 순간으로 꼽혔습니다</li>
+    <li><b>모임 전 참석 여부 개별 확인</b> — 내성적인 분은 "갈까 말까" 문 앞에서 고민합니다</li>
+    <li><b>모임 후 사진을 조 채널에 즉시 공유</b> — 분위기가 이어집니다</li>
+    <li><b>불참자 챙기기</b> — 못 온 분이 소외되지 않게 사진·요약 공유 + 다음에 꼭 보자는 DM</li>
+  </ul>
+
+  <div class="box device">
+    <span class="badge">2조 실물</span>
+    <h3>사전 정보 링크 카드 만들어 돌리기</h3>
+    <p>처음 만나는 자리의 어색함은 <b>정보 부족</b>에서 옵니다. 만나기 전에 "누가 오는지"를 미리 알면 대화가 자기소개부터 시작하지 않아도 됩니다. 2조에서 실제로 쓴 두 종류입니다.</p>
+    <div class="tscroll"><table>
+      <tr><th>언제</th><th>카드</th><th>실제 사례</th></tr>
+      <tr><td>조 모임 전</td><td>조원별 프로필 + 이번에 만든 OS 한 줄</td><td><a href="https://baezzanglion.github.io/sponge-intro/2jo.html" target="_blank" rel="noopener">우리 2조 · 서로의 OS</a></td></tr>
+      <tr><td>오프라인 모임 전</td><td>같은 테이블 사람들 소개 + 대화 질문 2개</td><td><a href="https://baezzanglion.github.io/sponge-intro/b-table.html" target="_blank" rel="noopener">B테이블 · 서로 소개해요</a></td></tr>
+    </table></div>
+    <div class="callout tip">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></svg>
+      <div>오프모임은 <b>다른 조 사람들과 섞인 테이블</b>에 앉게 됩니다. 그때 테이블 명단을 미리 카드로 만들어 돌리면, 처음 보는 사람과도 첫 5분을 건너뛰고 시작합니다. <b>대화 질문 2개를 카드에 박아두는 것</b>이 핵심이에요 — 뭘 물어야 할지 모르는 어색함이 사라집니다.</div>
+    </div>
+  </div>
+
+  <h3>매주 반복 루틴 (이게 전부입니다)</h3>
+  <div class="tscroll"><table>
+    <tr><th>시점</th><th>할 일</th><th>소요</th></tr>
+    <tr><td>모임 2일 전</td><td>과제 현황 스캔 → <b>미제출자 개별 호명 독려</b></td><td>15분</td></tr>
+    <tr><td>모임 당일 오전</td><td>발표 순서 <b>+ 피드백 담당 2명</b> 랜덤 추첨 공지 (장치 4)</td><td>5분</td></tr>
+    <tr><td>모임 중</td><td>진행 + 피드백 시트 실시간 작성 안내</td><td>—</td></tr>
+    <tr><td>모임 직후</td><td><b>MVP 선정 발표</b> + 조장 코멘트</td><td>20분</td></tr>
+    <tr><td>모임 다음 날</td><td>발표자별 <b>조장 피드백</b> 시트에 작성</td><td>40분</td></tr>
+  </table></div>
+
+  <h3>마지막 주</h3>
+  <ul>
+    <li>발표 순서에서 <b>불참자 제외 / 늦는 사람은 맨 뒤 배치</b></li>
+    <li><b>피드백 짝 배정 유지</b> (조장 독점 → 전원 참여) → 장치 4 · 6장</li>
+    <li><b>깜짝 졸업 선물</b> → 6장</li>
+  </ul>
+</section>
+
+<!-- ═══ 3장 ═══ -->
+<section class="chapter" id="c3">
+  <div class="chap-band"><span class="no">3</span><h2>핵심 장치 6종</h2></div>
+  <p class="chap-intro">2조 운영과 2기 회고에서 효과를 확인한 것들만 담았습니다. 전부 무료이고, 오늘 바로 시작할 수 있습니다.</p>
+
+  <div class="box device">
+    <span class="badge">효과 1위</span>
+    <h3>장치 1. 피드백 시트</h3>
+    <p>구글시트에 <b>행=발표자 / 열=조원</b> 매트릭스를 만들고, 각 칸에 두 줄만 적게 합니다.</p>
+    <div class="say">+ 인상깊었던 점
+- 이거 개선되면 너무 좋을 것 같아요</div>
+    <h4>왜 강력한가</h4>
+    <ul>
+      <li>발표가 일방향으로 끝나지 않고 <b>다음 주 개선</b>으로 이어짐 (2기 2조는 <b>당일 반영</b> 사례가 여러 번)</li>
+      <li>글로 남아서 나중에 <b>졸업 선물의 재료</b>가 됨 (6장)</li>
+      <li>말보다 글이 편한 조원도 100% 참여</li>
+    </ul>
+    <div class="callout tip">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></svg>
+      <div><b>운영 팁:</b> 반드시 <b>모임 중에 실시간으로</b> 쓰게 하세요. 나중에 쓰라고 하면 절반이 빕니다.</div>
+    </div>
+  </div>
+
+  <div class="box device">
+    <span class="badge">매주 20분</span>
+    <h3>장치 2. 조별 MVP 투표</h3>
+    <p>매주 모임 끝에 <b>"오늘의 MVP + 선정 이유"</b>를 시트에 적게 합니다.</p>
+    <ul>
+      <li><b>동률이면 첫 수상자 우선</b> — 이미 받은 사람보다 처음 받는 사람에게 (2조 실제 룰)</li>
+      <li>발표는 <b>선정 이유를 그대로 인용</b>하면 훨씬 따뜻합니다</li>
+      <li>조장이 흐름을 봐서 <b>여러 명에게 분산</b>되도록</li>
+    </ul>
+    <div class="callout warn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 21h20L12 3z"/><path d="M12 10v5M12 18.2v.3"/></svg>
+      <div><b>2기 회고의 경고:</b> "MVP만 눈에 들어오는 구조"가 중간층을 가린다는 지적이 있었습니다. 해결책은 MVP를 없애는 게 아니라 <b>다른 층위의 인정을 추가</b>하는 것 (장치 6, 그리고 6장 전원 수상).</div>
+    </div>
+  </div>
+
+  <div class="box device">
+    <span class="badge">관계 1등 공신</span>
+    <h3>장치 3. 마니또 (마음배달)</h3>
+    <p>2조 관계 형성의 1등 공신입니다. 도구와 진행법이 준비되어 있어 <b>링크만 쓰시면 됩니다</b> → <a href="#c4">4장에서 상세 안내</a></p>
+  </div>
+
+  <div class="box device">
+    <span class="badge">2조 발전형</span>
+    <h3>장치 4. 랜덤 발표 순서 + 랜덤 피드백 짝</h3>
+    <p>매주 무작위로 섞어 순서를 공지합니다.</p>
+    <ul>
+      <li>"준비된 사람부터"로 하면 <b>늘 같은 사람이 먼저</b> 하고, 못한 사람은 계속 숨습니다</li>
+      <li>랜덤이면 <b>모두가 준비</b>해 옵니다</li>
+      <li><b>조장은 중간쯤</b> 배치가 진행에 좋습니다</li>
+    </ul>
+    <h4>2조가 오프모임 이후 발전시킨 형태 — 순서와 피드백 담당을 한 번에 뽑기</h4>
+    <p>발표 순서만 뽑던 것을, <b>발표자마다 피드백 담당 2명을 같이 랜덤 배정</b>하는 방식으로 바꿨습니다. 공지 한 장에 순서와 각자의 담당 발표자가 함께 나갑니다.</p>
+    <div class="say"><button type="button" data-copy="🎤 오늘 발표 순서 &amp; 피드백 담당 (랜덤!)
+1. ○○  ← 피드백: △△, □□
+2. △△  ← 피드백: ○○, ◇◇
+3. □□  ← 피드백: ◇◇, ○○">복사</button>🎤 오늘 발표 순서 &amp; 피드백 담당 (랜덤!)
+1. ○○  ← 피드백: △△, □□
+2. △△  ← 피드백: ○○, ◇◇
+3. □□  ← 피드백: ◇◇, ○○</div>
+    <h4>무엇이 달라졌나</h4>
+    <ul>
+      <li><b>듣는 태도가 바뀝니다.</b> "내가 코멘트해야 하는 사람"이 정해져 있으면 그 발표를 <b>다르게 듣습니다</b></li>
+      <li>피드백이 <b>조장 독점 → 전원 참여</b>로 바뀝니다. 조장 원맨쇼가 사라집니다</li>
+      <li>조용한 조원에게도 <b>말할 자리가 지정</b>됩니다 ("의견 있으신 분?"에는 아무도 손 안 듭니다)</li>
+      <li>발표자는 <b>최소 2명의 반응이 보장</b>되어, 발표하고 무반응인 상황이 안 생깁니다</li>
+    </ul>
+    <div class="callout tip">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></svg>
+      <div><b>마지막 주에만 하지 말고 중반부터 도입하세요.</b> 2조는 오프모임 이후에 시작했는데, 더 일찍 했으면 좋았겠다는 게 남은 아쉬움입니다. 형식은 [👍 좋았던 점 하나 + 💡 제안·질문 하나] 30초면 충분합니다.</div>
+    </div>
+  </div>
+
+  <div class="box device">
+    <span class="badge">평일의 해법</span>
+    <h3>장치 5. 부조장 상시 미션</h3>
+    <p>2기 회고에서 <b>"평일에 조 채널이 조용했다"</b>가 여러 조의 공통 아쉬움이었습니다. 반면 살아 있던 조에는 공통점이 있었어요 — <b>부조장이 매일 굴리는 작은 미션</b>이 있었다는 것.</p>
+    <h4>추천 미션 (하나만 골라도 충분)</h4>
+    <ul>
+      <li><b>셸 보내기 운동</b> — 부조장이 매일 조원 한 명씩 셸 보내며 한 줄 응원 (2기 5조 실제 사례)</li>
+      <li><b>오늘의 삽질 한 줄</b> — 각자 오늘 막힌 것 한 줄씩 (해결 안 됐어도 OK)</li>
+      <li><b>좋은 사례 릴레이</b> — 다른 조·유닛에서 본 좋은 것 하나 공유</li>
+    </ul>
+    <div class="callout tip">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></svg>
+      <div><b>조장이 다 하려 하지 마세요.</b> 부조장에게 <b>가볍고 반복되는 역할</b>을 맡기는 것이 2기에서 조 채널을 살린 실제 방법이었습니다. 부조장도 역할이 있어야 즐겁습니다.</div>
+    </div>
+  </div>
+
+  <div class="box device">
+    <span class="badge">회고 반영 신규</span>
+    <h3>장치 6. 회복 경로 만들기</h3>
+    <p>2기에서 <b>"제때 제출 못 했거나 결석해서 발표 못 한 사람에게 회복 경로가 없었다"</b>는 지적이 나왔습니다. 못 낸 사람이 그대로 사라지는 걸 막는 장치입니다.</p>
+    <h4>만드는 법</h4>
+    <ul>
+      <li>조 슬랙에 <b>"지각제출도 환영" 스레드</b>를 상시 열어둡니다</li>
+      <li>늦게라도 올리면 <b>조원들이 자유롭게 응원·피드백</b></li>
+      <li>결석자에게는 그 주 <b>피드백 시트 링크 + 요약</b>을 DM으로 전달</li>
+    </ul>
+    <p>이 장치 하나가 "나 이제 끝났다"고 느끼는 사람을 돌아오게 합니다.</p>
+  </div>
+</section>
+
+<!-- ═══ 4장 ═══ -->
+<section class="chapter" id="c4">
+  <div class="chap-band"><span class="no">4</span><h2>마니또(마음배달) 배포 가이드</h2></div>
+  <p class="chap-intro">2조 관계 형성의 1등 공신. 3기 조장님들은 그냥 링크만 쓰시면 됩니다.</p>
+
+  <h3>준비물 (전부 무료 · 설치 없음)</h3>
+  <div class="tscroll"><table>
+    <tr><th>도구</th><th>링크</th><th>용도</th></tr>
+    <tr><td>마음배달</td><td><a href="https://maeumbaedal.vercel.app" target="_blank" rel="noopener">maeumbaedal.vercel.app</a><br><small>레포: github.com/baezzanglion/maeumbaedal</small></td><td>조원 이름 입력 → <b>익명 배정 + 개인별 봉투 링크</b> 자동 생성. 서버 없는 정적 앱이라 데이터가 밖으로 안 나감</td></tr>
+    <tr><td>추리 대회 (선택)</td><td><small>github.com/baezzanglion/maeumbaedal-quiz</small></td><td>마지막에 "누가 내 마니또였을까" 맞히기 이벤트</td></tr>
+  </table></div>
+
+  <h3>진행 흐름</h3>
+  <div class="stage"><span class="n">1</span><div class="body"><h4>오프닝 공지</h4><p>"오늘부터 우리, 서로의 다정한 우체부가 됩니다 🤫" (복붙 문구는 7장에)</p></div></div>
+  <div class="stage"><span class="n">2</span><div class="body"><h4>배정 DM</h4><p>각자에게 봉투 링크만 개별 발송 (<b>조장도 참여!</b>)</p></div></div>
+  <div class="stage"><span class="n">3</span><div class="body"><h4>주간 미션</h4><p>"이번 주엔 내 마니또 글에 이모지 하나 남기기" 정도로 가볍게</p></div></div>
+  <div class="stage"><span class="n">4</span><div class="body"><h4>추측 스레드</h4><p>중간에 "누가 내 마니또일까?" 스레드로 재미 증폭</p></div></div>
+  <div class="stage"><span class="n">5</span><div class="body"><h4>최종 공개</h4><p>마지막 주에 전체 체인 공개 (졸업 선물에 넣으면 효과 2배 → 6장)</p></div></div>
+
+  <h3>시작 시점은 언제가 좋을까</h3>
+  <ul>
+    <li>2조는 <b>초반(1~2주차)에 시작</b>해서 관계 형성을 앞당겼습니다</li>
+    <li>2기 회고에는 <b>"오프라인 모임 이후 시작"</b> 제안도 있었습니다</li>
+    <li><b>추천: 초반 시작 + 오프라인 모임에서 중간 이벤트.</b> 초반이 가장 서먹한 구간이라, 그때 장치가 필요합니다</li>
+  </ul>
+
+  <h3>운영 팁</h3>
+  <ul>
+    <li><b>부담 최소화가 핵심</b> — "이모지 하나, 댓글 한 줄이면 충분"을 계속 말해주세요</li>
+    <li><b>조장이 가장 열심히</b> 하세요. 조장이 시들면 이벤트도 시듭니다</li>
+    <li>체인이 <b>원(circle)으로 돌게</b> 배정하면 공개할 때 이야기가 예쁩니다</li>
+  </ul>
+</section>
+
+<!-- ═══ 5장 ═══ -->
+<section class="chapter" id="c5">
+  <div class="chap-band"><span class="no">5</span><h2>뒤처진 조원 케어 매뉴얼</h2></div>
+  <p class="chap-intro">2조가 이탈 0명으로 마친 실제 방법입니다. 이 장이 이 문서의 핵심입니다. (물론 좋은 조원들을 만난 운이 컸습니다. 다만 운이 안 좋을 때를 대비하는 게 장치의 역할입니다.)</p>
+
+  <p><b>이 장이 왜 중요한지는, 6주 뒤 조원이 남긴 이 한 문장이 대신 말해줍니다.</b></p>
+  <blockquote class="voice">"단 한 명의 낙오자 없이 6주를 수료할 수 있어서 — 나 혼자만 마무리하는 게 아닌 <b>함께 마무리했다</b>는 보람이 느껴졌습니다"</blockquote>
+  <p>완주는 개인의 성취로 기억되지 않습니다. <b>함께 끝냈다는 사실</b>로 기억됩니다.</p>
+
+  <h3>원칙</h3>
+  <ul>
+    <li><b>"왜 안 했어요?"는 절대 금지.</b> 부담이 이탈로 직행합니다</li>
+    <li><b>"뭐가 막혔어요?"</b>로 물으세요. 대부분 기술이 아니라 <b>시작점</b>이 막혀 있습니다</li>
+    <li>공개 채널에서 미제출자를 나열하지 마세요. <b>호명은 하되, 응원 톤으로</b></li>
+    <li><b>완성이 아니라 흔적을 요구하세요</b> — "과제를 못 했어도 고민한 흔적은 나눠주세요"라고 하면 제출 문턱이 절반으로 낮아집니다. 흔적을 나눈 사람은 다음 주에 완성해 옵니다</li>
+  </ul>
+  <blockquote>2기 참여자 회고의 이 말을 기억하세요: "남들의 속도를 따라가지 못하고 나만 헤매는 게 아닌가 하는 답답함을, <b>먼저 겪어본 사람들의 응원과 댓글로</b> 헤쳐 나올 수 있었다"</blockquote>
+
+  <h3>단계별 개입</h3>
+  <div class="stage"><span class="n">1</span><div class="body"><h4>채널 독려 (전체)</h4>
+    <div class="say"><button type="button" data-copy="🏁 이번 주 과제, 아직인 분들!
+템플릿에 적혀 있어요 — &quot;다 못 채워도 OK&quot;
+①지금 걸린 고민 하나 ②어디까지 왔나 ③다음 생각
+세 줄이면 제출입니다. 10분 컷!
+막히면 저 부르세요 🙌">복사</button>🏁 이번 주 과제, 아직인 분들!
+템플릿에 적혀 있어요 — "다 못 채워도 OK"
+①지금 걸린 고민 하나 ②어디까지 왔나 ③다음 생각
+세 줄이면 제출입니다. 10분 컷!
+막히면 저 부르세요 🙌</div>
+  </div></div>
+  <div class="stage"><span class="n">2</span><div class="body"><h4>개인 맞춤 호명 (효과 큼)</h4>
+    <p>전체 공지에 <b>이름별 한 줄</b>을 붙입니다. "당신 걸 내가 알고 있다"는 신호가 핵심입니다.</p>
+    <div class="say"><button type="button" data-copy="· ○○님 — 지난주 그 이야기 이어서 쓰면 끝!
+· △△님 — 발표 때 하신 얘기 그대로 적으셔도 충분해요
+· □□님 — 내용은 이미 최고인데 제목만 비어서 미제출로 집계돼요. 3분 컷!">복사</button>· ○○님 — 지난주 그 이야기 이어서 쓰면 끝!
+· △△님 — 발표 때 하신 얘기 그대로 적으셔도 충분해요
+· □□님 — 내용은 이미 최고인데 제목만 비어서 미제출로 집계돼요. 3분 컷!</div>
+  </div></div>
+  <div class="stage"><span class="n">3</span><div class="body"><h4>1:1 DM + 특별미션</h4>
+    <p>계속 안 되는 조원에게는 <b>조장이 직접 미션을 부여</b>합니다.</p>
+    <blockquote class="voice">"선장님 특별 미션! 화요일까지 고민한 결과 2조 팀방에 공유하기!!"</blockquote>
+    <p>공개 약속이 되면 실행률이 크게 오릅니다. <b>(2조 실제 사례 — 이 조원은 끝까지 완주했습니다)</b></p>
+  </div></div>
+  <div class="stage"><span class="n">4</span><div class="body"><h4>함께 앉기</h4>
+    <p>그래도 안 되면 30분만 잡아 <b>화면 공유로 같이</b> 하세요. 대부분 첫 15분에 풀립니다.</p>
+  </div></div>
+
+  <h3>셸 부족 조원 챙기기 — 2기 참여자 회고에서만 드러난 문제</h3>
+  <blockquote class="voice">"셸이 없어서 크루들의 공유회를 듣지 못한다는 게 너무 아쉬웠습니다. 큰 기회손실이었어요"</blockquote>
+  <p><b>악순환 구조:</b> 바빠서 활동 못 함 → 셸이 안 모임 → 공유회 못 들어감 → <b>더 뒤처짐.</b> 즉 <b>가장 도움이 필요한 사람이 가장 접근하기 어려워집니다.</b></p>
+  <h4>조장이 할 수 있는 것</h4>
+  <ul>
+    <li>셸이 부족한 조원을 조용히 파악 (공유회에 계속 안 보이는 분)</li>
+    <li>여유 있는 조원들과 함께 <b>셸 나눔</b></li>
+    <li>못 들은 공유회는 <b>참석한 조원이 요약해서 조 채널에 공유</b></li>
+  </ul>
+
+  <h3>잘하는 조원 케어 (천장 올리기)</h3>
+  <p>바닥만 올리면 잘하는 조원이 심심해집니다. 세 가지가 효과적이었습니다.</p>
+  <ol>
+    <li><b>좋은 질문 던지기</b> — "안 하기로 한 건 뭐예요?", "유저 10명 되면 뭐가 먼저 부러질까요?"</li>
+    <li><b>연결해주기</b> — 다른 조·유닛의 유사 사례를 찾아 전달</li>
+    <li><b>무대 주기</b> — 조 대표 발표자 추천, 첫 사용자 10명 모아주기</li>
+  </ol>
+
+  <h3>유닛에 빠진 조원 (2기 신규 이슈)</h3>
+  <p>유닛 몰입도가 높을수록 <b>조 활동이 옅어지는 현상</b>이 2기에 관찰됐습니다.</p>
+  <ul>
+    <li>유닛 활동을 <b>조 채널에 공유하게</b> 유도하세요 ("유닛에서 배운 것 하나만 풀어주세요!")</li>
+    <li>유닛과 조가 경쟁 관계가 아니라 <b>조가 유닛 성과를 자랑하는 자리</b>가 되면 둘 다 삽니다</li>
+  </ul>
+</section>
+
+<!-- ═══ 6장 ═══ -->
+<section class="chapter" id="c6">
+  <div class="chap-band"><span class="no">6</span><h2>마지막 주 &amp; 졸업 선물</h2></div>
+
+  <h3>마지막 모임 운영</h3>
+  <ol>
+    <li><b>피드백 짝을 마지막에도 그대로</b> (장치 4를 중반부터 굴렸다면 이미 익숙합니다)<br>
+    발표자당 조원 2명 랜덤 배정 · [👍 좋았던 점 하나 + 💡 제안이나 질문 하나] 30초씩<br>
+    → 조장 원맨쇼가 아니라 <b>서로에게 남기는 마지막 말</b>이 됩니다<br>
+    마지막 주에는 여기에 한 문장을 더 붙여보세요 — <b>"6주간 지켜본 이 사람의 변화 한 가지"</b></li>
+    <li><b>마무리 토크 질문 2개</b> (2조에서 반응 좋았음)<br>
+    "여러분의 OS는, 여러분이 없어도 돌아가나요?"<br>
+    "6주 전의 나에게 한마디 한다면?"</li>
+  </ol>
+
+  <h3>졸업 선물 만들기 (강력 추천)</h3>
+  <p>6주간 쌓인 것들을 <b>한 사람에 한 장씩 카드</b>로 만들어 마지막에 공개합니다.</p>
+  <div class="tscroll"><table>
+    <tr><th>재료</th><th>어디서</th></tr>
+    <tr><td>주차별 여정</td><td>각자 과제 제출물 제목</td></tr>
+    <tr><td>동료들이 남긴 말</td><td><b>피드백 시트</b> — 그래서 시트가 중요합니다</td></tr>
+    <tr><td>육성 어록</td><td>모임 녹취·회의록 (티로 등)</td></tr>
+    <tr><td>사진</td><td>줌 화면 캡처 (단체 그리드에서 개인 크롭 가능)</td></tr>
+    <tr><td>마니또 공개</td><td>마음배달 배정표</td></tr>
+    <tr><td>수상</td><td>MVP 기록 + <b>비수상자에게도 근거 있는 상</b></td></tr>
+  </table></div>
+  <div class="callout warn">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 21h20L12 3z"/><path d="M12 10v5M12 18.2v.3"/></svg>
+    <div><b>가장 중요한 원칙: 전원 수상.</b> MVP만 배지를 달면 못 받은 사람은 자기 카드에서 "나는 없네"부터 봅니다. <b>스토리텔링상 · 피드백 장인상 · 꾸준한 디벨롭상 · 철인 완주상 · 용기상</b>처럼 실제 근거가 있는 상을 만들어 전원에게 주세요. <b>선물이 성적표가 되지 않게.</b></div>
+  </div>
+  <p><b>2조 실제 사례:</b> <a href="https://baezzanglion.github.io/sponge-intro/2jo-graduation.html" target="_blank" rel="noopener">2조 졸업 사진관</a></p>
+</section>
+
+<!-- ═══ 7장 ═══ -->
+<section class="chapter" id="c7">
+  <div class="chap-band"><span class="no">7</span><h2>복사해 쓰는 문구 모음</h2></div>
+  <p class="chap-intro">복사 버튼을 누르고 슬랙에 붙여넣은 뒤, ○○ 자리만 바꾸면 됩니다.</p>
+
+  <p class="say-label">주간 독려</p>
+  <div class="say"><button type="button" data-copy="🏁 이번 주 과제 안내드려요!
+· 마감: ○요일 밤
+· 제출: 1_mission/N조/{닉네임}/N주차 폴더/submission.md
+템플릿에 &quot;다 못 채워도 OK&quot;라고 적혀 있어요. 한 것만 적으면 됩니다 :)
+막히면 언제든 저 부르세요 🙌">복사</button>🏁 이번 주 과제 안내드려요!
+· 마감: ○요일 밤
+· 제출: 1_mission/N조/{닉네임}/N주차 폴더/submission.md
+템플릿에 "다 못 채워도 OK"라고 적혀 있어요. 한 것만 적으면 됩니다 :)
+막히면 언제든 저 부르세요 🙌</div>
+
+  <p class="say-label">발표 순서 + 피드백 담당 공지</p>
+  <div class="say"><button type="button" data-copy="🎤 오늘 발표 순서 &amp; 피드백 담당 (랜덤 추첨!)
+1. ○○  ← 피드백: △△, □□
+2. △△  ← 피드백: ○○, ◇◇
+3. □□  ← 피드백: ◇◇, ○○
+
+담당이신 분은 그 발표를 특히 잘 들어주세요 :)
+발표 끝나면 [👍 좋았던 점 하나 + 💡 제안·질문 하나] 30초씩 부탁해요!">복사</button>🎤 오늘 발표 순서 &amp; 피드백 담당 (랜덤 추첨!)
+1. ○○  ← 피드백: △△, □□
+2. △△  ← 피드백: ○○, ◇◇
+3. □□  ← 피드백: ◇◇, ○○
+
+담당이신 분은 그 발표를 특히 잘 들어주세요 :)
+발표 끝나면 [👍 좋았던 점 하나 + 💡 제안·질문 하나] 30초씩 부탁해요!</div>
+
+  <p class="say-label">MVP 발표</p>
+  <div class="say"><button type="button" data-copy="🏆 이번 주 MVP는 ○○님입니다!
+조원들이 남긴 선정 이유:
+&quot;(시트에서 그대로 인용)&quot;
+축하해주세요 🎉">복사</button>🏆 이번 주 MVP는 ○○님입니다!
+조원들이 남긴 선정 이유:
+"(시트에서 그대로 인용)"
+축하해주세요 🎉</div>
+
+  <p class="say-label">마니또 오프닝</p>
+  <div class="say"><button type="button" data-copy="🧀💌 [마음배달] 오늘부터 우리, 서로의 다정한 우체부가 됩니다
+각자 '몰래 챙길 한 사람'이 정해집니다. 티 안 나게 응원하고 챙기는 거예요 🤫
+거창할 것 없어요 — 이모지 하나, 다정한 댓글 한 줄이면 충분!">복사</button>🧀💌 [마음배달] 오늘부터 우리, 서로의 다정한 우체부가 됩니다
+각자 '몰래 챙길 한 사람'이 정해집니다. 티 안 나게 응원하고 챙기는 거예요 🤫
+거창할 것 없어요 — 이모지 하나, 다정한 댓글 한 줄이면 충분!</div>
+
+  <p class="say-label">지각 제출 환영</p>
+  <div class="say"><button type="button" data-copy="📮 늦어도 괜찮아요!
+이 스레드에 올려주시면 조원들이 함께 봐드립니다.
+&quot;늦어서 안 낸다&quot;가 제일 아쉬워요. 늦게라도 내면 그게 완주입니다 🙌">복사</button>📮 늦어도 괜찮아요!
+이 스레드에 올려주시면 조원들이 함께 봐드립니다.
+"늦어서 안 낸다"가 제일 아쉬워요. 늦게라도 내면 그게 완주입니다 🙌</div>
+</section>
+
+<!-- ═══ 8장 ═══ -->
+<section class="chapter" id="c8">
+  <div class="chap-band"><span class="no">8</span><h2>조장이 미리 알면 좋은 것 6가지</h2></div>
+  <ol>
+    <li><b>초반 2주가 승부처.</b> 중반부터는 리듬이 알아서 굴러갑니다. 초반에 힘을 쏟으세요.</li>
+    <li><b>완벽한 조장보다 꾸준한 조장.</b> 매주 같은 시간에 같은 걸 하는 게 화려한 이벤트보다 강합니다.</li>
+    <li><b>조장도 조원입니다.</b> 본인 과제를 먼저·잘 하는 게 최고의 독려입니다.</li>
+    <li><b>혼자 하지 마세요.</b> 부조장에게 반복 미션을, 조원에게 리딩 기회를 나누세요. (2기 회고 제안: "조별 모임 때 조원이 돌아가면서 리딩해보기")</li>
+    <li><b>비교하지 마세요.</b> 다른 조가 더 좋아 보이는 순간이 반드시 옵니다. 조장의 성적표는 조장의 결과물이 아니라 <b>조원들 결과물의 합</b>입니다.</li>
+    <li><b>기록하세요.</b> 매주 남긴 것들이 마지막에 선물이 됩니다. (이 문서도 그 기록에서 나왔습니다)</li>
+  </ol>
+</section>
+
+<!-- ═══ 9장 ═══ -->
+<section class="chapter" id="c9">
+  <div class="chap-band"><span class="no">9</span><h2>운영진께 드리는 요청 (조장 입장에서)</h2></div>
+  <p class="chap-intro">이 플레이북이 잘 작동하려면 운영에서 받쳐주면 좋은 것들입니다. (2기 회고와 동일 방향)</p>
+  <div class="tscroll"><table>
+    <tr><th>요청</th><th>이유</th></tr>
+    <tr><td>제출 집계 기준·시점 명시</td><td>스냅샷 이후 제출분이 미제출로 잡히면 조장이 잘못된 독려를 하게 됩니다 (2기 실제 발생)</td></tr>
+    <tr><td>주간 고정 공지 카드</td><td>매주 같은 자리에 "일정·과제·마감" 한 장 → 조장이 재가공 없이 그대로 전달</td></tr>
+    <tr><td>온보딩 트레일 가이드 공식 채택·사전 배포</td><td>셀프 온보딩 가이드(<a href="https://baezzanglion.github.io/sponge-intro/onboarding.html" target="_blank" rel="noopener">온보딩 트레일</a>)를 만들어 두었습니다. 셋업데이 전 공지에 실어주시면 초반 격차가 줄어듭니다</td></tr>
+    <tr><td>조장 온보딩 세션 30분</td><td>이 문서 기반으로 기수 시작 전에 한 번</td></tr>
+    <tr><td>조장 단톡/채널</td><td>조장끼리 장치를 실시간 공유하면 시행착오가 줄어듭니다</td></tr>
+  </table></div>
+</section>
+
+<!-- ═══ 부록 ═══ -->
+<section class="chapter" id="c10">
+  <div class="chap-band"><span class="no">부록</span><h2>3기 조장 첫 주 체크리스트</h2></div>
+  <p class="chap-intro">시작 전에 이것만 준비하면 됩니다. 체크는 이 브라우저에 저장됩니다.</p>
+  <div class="box">
+    <div class="check" style="border-top:none;padding-top:0;margin-top:0">
+      <label><input type="checkbox" data-ck="a01">조원 명단 확보 + 슬랙 DM 리스트 만들기</label>
+      <label><input type="checkbox" data-ck="a02"><span><a href="https://baezzanglion.github.io/sponge-intro/onboarding.html" target="_blank" rel="noopener">온보딩 트레일</a> 링크를 조 채널에 공유 — 셋업데이 전 완주 권장</span></label>
+      <label><input type="checkbox" data-ck="a03">피드백 구글시트 생성 (행=발표자 / 열=조원) — 템플릿 복사해서 사용</label>
+      <label><input type="checkbox" data-ck="a04">마음배달 접속해서 조원 이름 입력 → 봉투 링크 준비</label>
+      <label><input type="checkbox" data-ck="a05">부조장과 역할 나누기 (부조장 = 상시 미션 담당)</label>
+      <label><input type="checkbox" data-ck="a06">조 채널에 미니 목표 스레드 열기</label>
+      <label><input type="checkbox" data-ck="a07">셋업데이 체크리스트로 1:1 DM 돌리기</label>
+      <label><input type="checkbox" data-ck="a08">조장 본인 과제 먼저 제출하기</label>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="fin">
+  <svg class="pores" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1200 340" aria-hidden="true">
+    <g fill="#3A2F1E" opacity=".55">
+      <ellipse cx="90" cy="70" rx="24" ry="18"/><ellipse cx="260" cy="220" rx="14" ry="11"/>
+      <ellipse cx="420" cy="90" rx="30" ry="22"/><ellipse cx="580" cy="280" rx="17" ry="13"/>
+      <ellipse cx="740" cy="60" rx="13" ry="10"/><ellipse cx="880" cy="230" rx="26" ry="19"/>
+      <ellipse cx="1050" cy="110" rx="20" ry="15"/><ellipse cx="1160" cy="290" rx="14" ry="11"/>
+      <ellipse cx="180" cy="300" rx="19" ry="14"/><ellipse cx="960" cy="30" rx="11" ry="8"/>
+    </g>
+  </svg>
+  <h2>마지막으로 — 이 문서가 존재하는 이유</h2>
+  <p>이 플레이북을 쓰면서 계속 걸렸던 것이 하나 있습니다. "다정함"은 문서로 전달할 수 없다는 것. 맞습니다. 전달할 수 없습니다. 그런데 6주를 돌아보니, 조원들이 고마워한 건 제 성격이 아니라 매주 반복된 장치들이었습니다. 피드백 시트가, 마니또가, 개별 호명이, 닉네임을 기억해주는 한마디가 — 다정함을 <b>작동</b>시켰습니다.</p>
+  <blockquote>다정함은 전달할 수 없지만,<br>다정함이 작동하게 만드는 장치는<br>전달할 수 있습니다.</blockquote>
+  <p>이 문서가 그 장치들입니다. 당신의 다정함이 조원들에게 닿는 통로가 되길 바랍니다.</p>
+  <p>이 문서는 계속 업데이트됩니다. 3기 조장님들의 경험이 더해지면 더 좋은 플레이북이 됩니다.<br>문의·제보: 2기 2조 배짱(박종배)</p>
+  <p class="fin-note">조장은 잘 가르치는 사람이 아니라, 아무도 놓치지 않는 판을 까는 사람입니다 🧽<br>v3.2 · 2026.08 · 2기 2조 운영 기록 + 2기 공식 회고 + 조장 개인 회고 반영 · <a href="https://baezzanglion.github.io/sponge-intro/onboarding.html">온보딩 트레일</a></p>
+</footer>
+
+<script>
+/* ── 복사 버튼 ── */
+document.querySelectorAll('[data-copy]').forEach(b => {
+  b.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(b.dataset.copy); }
+    catch (e) {
+      const t = document.createElement('textarea');
+      t.value = b.dataset.copy; document.body.appendChild(t); t.select();
+      document.execCommand('copy'); t.remove();
+    }
+    const orig = b.textContent;
+    b.textContent = '복사됨 ✓'; b.classList.add('ok');
+    setTimeout(() => { b.textContent = orig; b.classList.remove('ok'); }, 1600);
+  });
+});
+
+/* ── 체크리스트 저장 ── */
+const KEY = 'sponge-playbook-v1';
+let saved = {};
+try { saved = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
+document.querySelectorAll('[data-ck]').forEach(c => {
+  if (saved[c.dataset.ck]) c.checked = true;
+  c.addEventListener('change', () => {
+    saved[c.dataset.ck] = c.checked;
+    try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
+    soakChapters();
+  });
+});
+
+/* ── 체크 전부 완료된 장은 밴드 칩이 물을 머금는다 ── */
+function soakChapters() {
+  document.querySelectorAll('.chapter').forEach(sec => {
+    const cks = sec.querySelectorAll('[data-ck]');
+    if (!cks.length) return;
+    const done = [...cks].every(c => c.checked);
+    const chip = sec.querySelector('.chap-band .no');
+    if (chip) chip.classList.toggle('soaked', done);
+    let word = sec.querySelector('.soak-word');
+    if (!word) {
+      word = document.createElement('span');
+      word.className = 'soak-word';
+      word.textContent = '머금음 완료';
+      sec.querySelector('.chap-band').appendChild(word);
+    }
+    requestAnimationFrame(() => word.classList.toggle('show', done));
+  });
+}
+soakChapters();
+
+/* ── 장 네비 스크롤스파이 ── */
+const links = [...document.querySelectorAll('#chapnav a')];
+const secs = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+const spy = () => {
+  let cur = null;
+  for (const s of secs) { if (s.getBoundingClientRect().top < 120) cur = s; }
+  links.forEach(a => a.classList.toggle('on', cur && a.getAttribute('href') === '#' + cur.id));
+  const on = document.querySelector('#chapnav a.on');
+  if (on) on.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+};
+let tick = false;
+addEventListener('scroll', () => {
+  if (!tick) { tick = true; requestAnimationFrame(() => { spy(); tick = false; }); }
+}, { passive: true });
+spy();
+</script>
+</body>
+</html>
